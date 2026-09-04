@@ -34,3 +34,19 @@ describe('home page', () => {
     expect($('main').text()).not.toMatch(/₽|руб\.|от \d+ ?000/);
   });
 });
+
+describe('cv page', () => {
+  const $ = html('cv/index.html');
+
+  it('shows the name, the fixed headline and the PDF download with the fixed filename', () => {
+    expect($('h1').first().text()).toBe('Даниил Есков');
+    expect($('main').text()).toContain('Fullstack-разработчик · Rust / React / Go / PHP');
+    const pdf = $('a[href="/resume.pdf"]');
+    expect(pdf.attr('download')).toBe('Daniil_Eskov_CV.pdf');
+  });
+
+  it('has the sections in order', () => {
+    const h2 = $('main h2').map((_, el) => $(el).text().trim()).get();
+    expect(h2).toEqual(['О себе', 'Стек', 'Опыт', 'Проекты', 'Образование', 'Языки']);
+  });
+});

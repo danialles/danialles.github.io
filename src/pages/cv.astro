@@ -1,0 +1,84 @@
+---
+import site from '../../site.config.mjs';
+import Base from '../layouts/Base.astro';
+import ContactButtons from '../components/ContactButtons.astro';
+import { loadCv } from '../lib/cv';
+import { personJsonLd } from '../lib/seo';
+
+const cv = loadCv();
+const h2 = 'mt-10 text-xl font-semibold tracking-tight print:mt-6';
+---
+<Base title={`${cv.name} — ${cv.headline}`} description={cv.summary.trim()} ogImage="/og/cv.png" jsonLd={personJsonLd(site)}>
+  <main class="mx-auto max-w-3xl px-4 py-12 print:py-0">
+    <header>
+      <h1 class="text-4xl font-bold tracking-tight">{cv.name}</h1>
+      <p class="mt-1 text-lg text-neutral-600">{cv.headline}</p>
+      <div class="mt-5 flex flex-wrap items-center gap-3 print:hidden">
+        <a href="/resume.pdf" download="Daniil_Eskov_CV.pdf" class="inline-flex items-center rounded-full bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-neutral-700">Скачать PDF</a>
+        <ContactButtons />
+      </div>
+      <p class="mt-3 hidden text-sm text-neutral-600 print:block">
+        {cv.contacts.telegram} · {cv.contacts.email} · {cv.contacts.site}
+      </p>
+    </header>
+
+    <section>
+      <h2 class={h2}>О себе</h2>
+      <p class="mt-3 leading-relaxed text-neutral-700">{cv.summary}</p>
+    </section>
+
+    <section>
+      <h2 class={h2}>Стек</h2>
+      <dl class="mt-3 grid gap-2 sm:grid-cols-[max-content_1fr] sm:gap-x-6">
+        {cv.stack.map((g) => (
+          <>
+            <dt class="font-medium">{g.group}</dt>
+            <dd class="text-neutral-700">{g.items.join(', ')}</dd>
+          </>
+        ))}
+      </dl>
+    </section>
+
+    <section>
+      <h2 class={h2}>Опыт</h2>
+      {cv.experience.map((job) => (
+        <article class="mt-4">
+          <div class="flex flex-wrap items-baseline justify-between gap-2">
+            <h3 class="font-semibold">{job.role}{job.org && <span class="font-normal text-neutral-600"> · {job.org}</span>}</h3>
+            <span class="text-sm text-neutral-500">{job.period}</span>
+          </div>
+          <ul class="mt-2 list-disc space-y-1 pl-5 text-neutral-700">
+            {job.points.map((p) => <li>{p}</li>)}
+          </ul>
+        </article>
+      ))}
+    </section>
+
+    <section>
+      <h2 class={h2}>Проекты</h2>
+      <ul class="mt-3 space-y-2 text-neutral-700">
+        {cv.projects.map((p) => (
+          <li><span class="font-medium text-neutral-900">{p.name}</span> — {p.line}. <span class="text-neutral-500">{p.stack}</span></li>
+        ))}
+      </ul>
+    </section>
+
+    <section>
+      <h2 class={h2}>Образование</h2>
+      <ul class="mt-3 space-y-1 text-neutral-700">
+        {cv.education.map((e) => (
+          <li>
+            <span class="font-medium text-neutral-900">{e.degree}</span>
+            {e.place && ` — ${e.place}`}
+            {e.period && <span class="text-neutral-500"> · {e.period}</span>}
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section>
+      <h2 class={h2}>Языки</h2>
+      <p class="mt-3 text-neutral-700">{cv.languages.join(', ')}</p>
+    </section>
+  </main>
+</Base>
