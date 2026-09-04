@@ -53,7 +53,7 @@ const services = [
         <h3 class="text-xl font-semibold">{s.title}</h3>
         <p class="mt-1 text-neutral-600">{s.lead}</p>
         <ul class="mt-4 space-y-2 text-neutral-700">
-          {s.items.map((item) => <li class="flex gap-2"><span class="text-accent">•</span><span>{item}</span></li>)}
+          {s.items.map((item) => <li class="flex gap-2"><span class="text-accent" aria-hidden="true">•</span><span>{item}</span></li>)}
         </ul>
         {s.bots && (
           <div class="mt-5 rounded-xl bg-neutral-50 p-4" data-bots>
