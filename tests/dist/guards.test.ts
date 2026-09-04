@@ -1,13 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { allHtmlFiles, read } from './helpers';
-
-// Words that must never reach the published HTML (spec §2, §4, §6).
-const FORBIDDEN: Array<[string, RegExp]> = [
-  ['brand of the anonymous case', /mainexperts/i],
-  ['CMS name hidden by positioning', /october\s*cms|\boctober\b/i],
-  ['raw PHP leaked from a client site', /<\?php/],
-  ['unfilled site.config value', /USERNAME/],
-];
+import { allHtmlFiles, html, read } from './helpers';
+import { FORBIDDEN } from '../forbidden';
 
 describe('published HTML', () => {
   const files = allHtmlFiles();
@@ -19,5 +12,16 @@ describe('published HTML', () => {
   it.each(FORBIDDEN)('never contains %s', (_label, pattern) => {
     const offenders = files.filter((f) => pattern.test(read(f)));
     expect(offenders).toEqual([]);
+  });
+});
+
+describe('site config', () => {
+  // A half-filled site.config.mjs still builds and looks fine — the missing contacts
+  // simply do not render. This test is the tripwire for that silence.
+  const $ = html('index.html');
+
+  it('is complete', () => {
+    expect($('#contacts [data-contact]').length).toBe(3);
+    expect($('#contacts [data-location]').text().trim().length).toBeGreaterThan(0);
   });
 });

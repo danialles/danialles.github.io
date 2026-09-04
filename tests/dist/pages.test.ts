@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { html } from './helpers';
+import { caseFrontmatters, exists, html, read } from './helpers';
 
 describe('home page', () => {
   const $ = html('index.html');
@@ -35,13 +35,29 @@ describe('home page', () => {
   });
 });
 
+describe('drafts', () => {
+  const drafts = caseFrontmatters().filter((c) => c.draft);
+  const sitemap = read('sitemap-0.xml');
+
+  it('exist, otherwise the checks below prove nothing', () => {
+    expect(drafts.length).toBeGreaterThan(0);
+  });
+
+  it('are absent from the sitemap and have no OG image', () => {
+    for (const { slug } of drafts) {
+      expect(sitemap, slug).not.toContain(`/cases/${slug}/`);
+      expect(exists(`og/${slug}.png`), slug).toBe(false);
+    }
+  });
+});
+
 describe('cv page', () => {
   const $ = html('cv/index.html');
 
   it('shows the name, the fixed headline and the PDF download with the fixed filename', () => {
     expect($('h1').first().text()).toBe('Даниил Есков');
     expect($('main').text()).toContain('Fullstack-разработчик · Rust / React / Go / PHP');
-    const pdf = $('a[href="/resume.pdf"]');
+    const pdf = $('a[href="/Daniil_Eskov_CV.pdf"]');
     expect(pdf.attr('download')).toBe('Daniil_Eskov_CV.pdf');
   });
 

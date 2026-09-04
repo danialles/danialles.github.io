@@ -3,8 +3,12 @@ import { useEffect, useRef, useState } from 'react';
 export interface Shot {
   thumb: string;
   full: string;
+  /** Intrinsic size of the thumbnail file. */
   width: number;
   height: number;
+  /** Intrinsic size of the lightbox file. */
+  fullWidth: number;
+  fullHeight: number;
   alt: string;
 }
 
@@ -21,6 +25,19 @@ export default function Gallery({ shots }: { shots: Shot[] }) {
   // Tracks whether the dialog was already open on the previous render, so initial
   // focus fires once per open — not on every ArrowLeft/ArrowRight index change.
   const wasOpenRef = useRef(false);
+
+  const isOpen = open !== null;
+
+  // The overlay is fixed, so the page underneath kept scrolling on wheel and touch.
+  // Restore whatever the document had before, not a hardcoded '': another script may own it.
+  useEffect(() => {
+    if (!isOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [isOpen]);
 
   const openAt = (i: number) => {
     triggerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -83,8 +100,10 @@ export default function Gallery({ shots }: { shots: Shot[] }) {
               aria-label={`Открыть: ${shot.alt}`}
               className="block aspect-[4/3] w-full overflow-hidden rounded-lg border border-neutral-200 bg-neutral-100 transition hover:border-neutral-400"
             >
-              {/* The box already fixes the ratio, but width/height keep the image from
-                  reflowing its cell before it loads. */}
+              {/* The wrapper's aspect-[4/3] already reserves the box, so these attributes
+                  are not the CLS fix: they state the file's intrinsic size, which keeps
+                  the picture from collapsing if the stylesheet fails and lets the browser
+                  size its decode before the bytes arrive. */}
               <img
                 src={shot.thumb}
                 alt={shot.alt}
@@ -110,8 +129,8 @@ export default function Gallery({ shots }: { shots: Shot[] }) {
           <img
             src={shots[open].full}
             alt={shots[open].alt}
-            width={shots[open].width}
-            height={shots[open].height}
+            width={shots[open].fullWidth}
+            height={shots[open].fullHeight}
             className="max-h-full max-w-full rounded-lg"
             onClick={(e) => e.stopPropagation()}
           />

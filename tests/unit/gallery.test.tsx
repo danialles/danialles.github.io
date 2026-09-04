@@ -4,8 +4,8 @@ import { afterEach, describe, expect, it } from 'vitest';
 import Gallery, { type Shot } from '../../src/components/cases/Gallery';
 
 const shots: Shot[] = [
-  { thumb: '/t1.webp', full: '/f1.webp', width: 1600, height: 1000, alt: 'Первый' },
-  { thumb: '/t2.webp', full: '/f2.webp', width: 1600, height: 1000, alt: 'Второй' },
+  { thumb: '/t1.webp', full: '/f1.webp', width: 640, height: 400, fullWidth: 1600, fullHeight: 1000, alt: 'Первый' },
+  { thumb: '/t2.webp', full: '/f2.webp', width: 640, height: 400, fullWidth: 1600, fullHeight: 1000, alt: 'Второй' },
 ];
 
 afterEach(cleanup);
@@ -31,6 +31,27 @@ describe('Gallery', () => {
 
     fireEvent.keyDown(window, { key: 'Escape' });
     expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('gives the thumbnail its own size and the lightbox the full-size one', () => {
+    render(<Gallery shots={shots} />);
+    const thumb = screen.getByRole('button', { name: 'Открыть: Первый' }).querySelector('img');
+    expect([thumb?.getAttribute('width'), thumb?.getAttribute('height')]).toEqual(['640', '400']);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Открыть: Первый' }));
+    const full = screen.getByRole('dialog').querySelector('img');
+    expect([full?.getAttribute('width'), full?.getAttribute('height')]).toEqual(['1600', '1000']);
+  });
+
+  it('locks the page scroll while the lightbox is open and restores it on close', () => {
+    document.body.style.overflow = 'auto';
+    render(<Gallery shots={shots} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Открыть: Первый' }));
+    expect(document.body.style.overflow).toBe('hidden');
+
+    fireEvent.keyDown(window, { key: 'Escape' });
+    expect(document.body.style.overflow).toBe('auto');
   });
 
   it('moves focus into the dialog on open and restores it on close', () => {

@@ -19,6 +19,13 @@ describe('SEO output', () => {
     }
   });
 
+  it('keeps the 404 out of the index and gives it no canonical of its own', () => {
+    const $ = html('404.html');
+    expect($('title').text().length).toBeGreaterThan(10);
+    expect($('meta[name="robots"]').attr('content')).toBe('noindex');
+    expect($('link[rel="canonical"]').length).toBe(0);
+  });
+
   it('ships sitemap, robots and 404', () => {
     expect(exists('sitemap-index.xml')).toBe(true);
     expect(read('sitemap-0.xml')).toContain('/cv/');

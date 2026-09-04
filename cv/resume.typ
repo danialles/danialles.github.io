@@ -1,5 +1,6 @@
 // One-page CV rendered from src/data/cv.yaml — the same file feeds /cv on the site.
-// Compile from the repo root: typst compile --root . cv/resume.typ dist/resume.pdf
+// Compile from the repo root: typst compile --root . cv/resume.typ dist/Daniil_Eskov_CV.pdf
+// `npm run pdf` also copies it to dist/resume.pdf, the stable path older links point at.
 #let cv = yaml("/src/data/cv.yaml")
 
 #set document(title: cv.name + " — " + cv.headline, author: cv.name)

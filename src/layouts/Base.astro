@@ -10,10 +10,15 @@ interface Props {
   description: string;
   ogImage?: string;
   jsonLd?: object;
+  /** Keeps the page out of the index and drops its canonical (the 404 has no URL of its own). */
+  noindex?: boolean;
 }
-const { title, description, ogImage = '/og/home.png', jsonLd } = Astro.props;
+const { title, description, ogImage = '/og/home.png', jsonLd, noindex = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogUrl = new URL(ogImage, Astro.site);
+// `<` inside a <script> body ends the element, whatever the JSON quoting says. Escaping it
+// keeps a stray angle bracket in the config from closing the tag and injecting markup.
+const jsonLdText = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : '';
 ---
 <!doctype html>
 <html lang="ru">
@@ -22,7 +27,7 @@ const ogUrl = new URL(ogImage, Astro.site);
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={site.firstName} />
     <meta property="og:title" content={title} />
@@ -35,7 +40,7 @@ const ogUrl = new URL(ogImage, Astro.site);
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    {jsonLd && <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+    {jsonLd && <script is:inline type="application/ld+json" set:html={jsonLdText} />}
   </head>
   <body class="bg-white font-sans text-neutral-900 antialiased">
     {/* Counter sits at the top of <body>, not in <head>: its <noscript><div><img> fallback

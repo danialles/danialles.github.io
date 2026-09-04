@@ -10,7 +10,7 @@
     "check": "astro check",
     "test": "vitest run tests/unit",
     "test:dist": "vitest run tests/dist",
-    "pdf": "typst compile --root . cv/resume.typ dist/resume.pdf"
+    "pdf": "typst compile --root . cv/resume.typ dist/Daniil_Eskov_CV.pdf && cp dist/Daniil_Eskov_CV.pdf dist/resume.pdf"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.5",

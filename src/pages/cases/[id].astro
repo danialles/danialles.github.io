@@ -16,15 +16,30 @@ const { data } = entry;
 const { Content } = await render(entry);
 
 // getImage() is server-only; the React island receives plain URLs.
+//
+// The first call asks for no width on purpose. `attributes` only echo the request back
+// (ask for 1600 on a 390 px screenshot and you get 1600 with the file still 390), and
+// the entry's `src` is a tracking Proxy — reading `src.width` from it marks the original
+// as referenced and leaves an unused full-size copy of every screenshot in dist. Asking
+// for the natural size is the one way to learn it without either lie.
+//
+// A source wider than 1600 px would cost one extra render here; nothing in the gallery
+// is, and the cap is what keeps a future oversized screenshot out of the lightbox.
 const shots = await Promise.all(
   data.gallery.map(async ({ src, alt }) => {
-    const full = await getImage({ src, format: 'webp', width: 1600 });
-    const thumb = await getImage({ src, format: 'webp', width: 640 });
+    const natural = await getImage({ src, format: 'webp' });
+    const full = Number(natural.attributes.width) <= 1600 ? natural : await getImage({ src, format: 'webp', width: 1600 });
+    const fullWidth = Number(full.attributes.width);
+    // Below 640 px the thumbnail would be a byte-identical twin of the full render
+    // under a second hash: nothing is upscaled. Reuse the render instead.
+    const thumb = fullWidth <= 640 ? full : await getImage({ src, format: 'webp', width: 640 });
     return {
       full: full.src,
       thumb: thumb.src,
-      width: Number(full.attributes.width),
-      height: Number(full.attributes.height),
+      width: Number(thumb.attributes.width),
+      height: Number(thumb.attributes.height),
+      fullWidth,
+      fullHeight: Number(full.attributes.height),
       alt,
     };
   }),

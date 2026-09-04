@@ -1,5 +1,9 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { loadCv, parseCv } from '../../src/lib/cv';
+import { FORBIDDEN } from '../forbidden';
+import site from '../../site.config.mjs';
 
 describe('parseCv', () => {
   it('rejects a document without a name', () => {
@@ -22,5 +26,22 @@ describe('src/data/cv.yaml', () => {
       for (const point of job.points) expect(point, point).not.toMatch(presentTense);
     }
     for (const line of cv.projects.map((p) => p.line)) expect(line, line).not.toMatch(presentTense);
+  });
+
+  it('keeps its contacts in sync with site.config.mjs', () => {
+    expect(cv.contacts.site).toBe(site.site);
+    expect(cv.contacts.telegram).toBe(site.telegram);
+    expect(cv.contacts.github).toBe(site.github);
+  });
+});
+
+describe('résumé sources', () => {
+  // The PDF is compiled straight from these two files, so the dist HTML guards never see them.
+  const SOURCES = ['src/data/cv.yaml', 'cv/resume.typ'];
+  const cases = SOURCES.flatMap((rel) => FORBIDDEN.map(([label, pattern]) => [rel, label, pattern] as const));
+
+  it.each(cases)('%s never contains %s', (rel, _label, pattern) => {
+    const text = readFileSync(resolve(import.meta.dirname, '../..', rel), 'utf8');
+    expect(text).not.toMatch(pattern);
   });
 });
