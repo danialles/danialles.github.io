@@ -15,7 +15,7 @@ export const cvSchema = z.object({
     telegram: z.url(),
     email: z.union([z.email(), z.literal('')]),
     site: z.url(),
-    github: z.url(),
+    github: z.union([z.url(), z.literal('')]),
   }),
   location: z.string(),
   stack: z.array(z.object({ group: z.string().min(1), items: z.array(z.string().min(1)).min(1) })).min(1),

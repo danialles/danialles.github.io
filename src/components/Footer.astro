@@ -7,7 +7,9 @@ const year = new Date().getFullYear();
     <p>© {year} {site.firstName}</p>
     <ul class="flex gap-6">
       <li><a href="/cv/" class="hover:text-neutral-900">Резюме</a></li>
-      <li><a href={site.github} rel="noopener" target="_blank" class="hover:text-neutral-900">GitHub</a></li>
+      {site.github && (
+        <li><a href={site.github} rel="noopener" target="_blank" class="hover:text-neutral-900">GitHub</a></li>
+      )}
     </ul>
   </div>
 </footer>

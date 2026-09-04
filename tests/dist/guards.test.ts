@@ -13,6 +13,13 @@ describe('published HTML', () => {
     const offenders = files.filter((f) => pattern.test(read(f)));
     expect(offenders).toEqual([]);
   });
+
+  // Owner's rule: the site must not point at any GitHub profile, so that the résumé
+  // and a personal account cannot be linked in either direction.
+  it('never links to github.com', () => {
+    const offenders = files.filter((f) => /github\.com\//i.test(read(f)));
+    expect(offenders).toEqual([]);
+  });
 });
 
 describe('site config', () => {

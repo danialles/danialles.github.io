@@ -55,7 +55,7 @@ describe('cv page', () => {
   const $ = html('cv/index.html');
 
   it('shows the name, the fixed headline and the PDF download with the fixed filename', () => {
-    expect($('h1').first().text()).toBe('Даниил Есков');
+    expect($('h1').first().text()).toBe('Даниил Еськов');
     expect($('main').text()).toContain('Fullstack-разработчик · Rust / React / Go / PHP');
     const pdf = $('a[href="/Daniil_Eskov_CV.pdf"]');
     expect(pdf.attr('download')).toBe('Daniil_Eskov_CV.pdf');

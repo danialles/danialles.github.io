@@ -1,4 +1,4 @@
-name: Даниил Есков
+name: Даниил Еськов
 headline: Fullstack-разработчик · Rust / React / Go / PHP
 summary: >
   4+ года коммерческой разработки. Делаю продукт целиком: фронт, бэк, боты,
@@ -6,9 +6,9 @@ summary: >
   привык отвечать за результат, а не за отдельный слой.
 contacts:
   telegram: https://t.me/timbelan
-  email: ""
-  site: https://USERNAME.github.io
-  github: https://github.com/USERNAME
+  email: timbersav91@gmail.com
+  site: https://daniil-eskov.github.io
+  github: ""
 location: ""
 stack:
   - group: Бэкенд

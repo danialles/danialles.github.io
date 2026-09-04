@@ -18,7 +18,7 @@
   let out = (link(cv.contacts.telegram, "Telegram"),)
   if cv.contacts.email != "" { out.push(link("mailto:" + cv.contacts.email, cv.contacts.email)) }
   out.push(link(cv.contacts.site, cv.contacts.site.replace("https://", "")))
-  out.push(link(cv.contacts.github, "GitHub"))
+  if cv.contacts.github != "" { out.push(link(cv.contacts.github, "GitHub")) }
   if cv.location != "" { out.push(cv.location) }
   out
 }
