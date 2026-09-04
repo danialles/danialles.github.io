@@ -1,0 +1,60 @@
+---
+import { getCollection, render } from 'astro:content';
+import { Image, getImage } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import ContactButtons from '../../components/ContactButtons.astro';
+import Gallery from '../../components/cases/Gallery';
+import { roleLabel } from '../../lib/cases';
+
+export async function getStaticPaths() {
+  const cases = await getCollection('cases', ({ data }) => !data.draft);
+  return cases.map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { data } = entry;
+const { Content } = await render(entry);
+
+// getImage() is server-only; the React island receives plain URLs.
+const shots = await Promise.all(
+  data.gallery.map(async ({ src, alt }) => {
+    const full = await getImage({ src, format: 'webp', width: 1600 });
+    const thumb = await getImage({ src, format: 'webp', width: 640 });
+    return {
+      full: full.src,
+      thumb: thumb.src,
+      width: Number(full.attributes.width),
+      height: Number(full.attributes.height),
+      alt,
+    };
+  }),
+);
+---
+<Base title={`${data.title} — кейс`} description={data.result} ogImage={`/og/${entry.id}.png`}>
+  <main class="mx-auto max-w-3xl px-4 py-12">
+    <p class="text-sm text-neutral-500">
+      {data.niche}{data.year && ` · ${data.year}`} · {roleLabel(data.role)}
+    </p>
+    <h1 class="mt-2 text-4xl font-bold tracking-tight">{data.title}</h1>
+    {data.url
+      ? <a href={data.url} rel="noopener" target="_blank" class="mt-3 inline-block text-accent hover:underline">Открыть сайт ↗</a>
+      : <p class="mt-3 text-neutral-500">Закрытая система, под NDA</p>}
+
+    <Image src={data.cover} alt={data.coverAlt} widths={[720, 1440]} sizes="(max-width: 768px) 100vw, 768px" class="mt-8 rounded-xl border border-neutral-200" />
+
+    <div class="case-body"><Content /></div>
+
+    {shots.length > 0 && (
+      <section class="mt-12">
+        <h2 class="text-2xl font-semibold">Экраны</h2>
+        <div class="mt-4"><Gallery client:visible shots={shots} /></div>
+      </section>
+    )}
+
+    <section class="mt-16 rounded-2xl bg-neutral-50 p-8">
+      <h2 class="text-2xl font-semibold">Похожая задача? Напишите</h2>
+      <p class="mt-2 text-neutral-600">Опишу, как сделал бы у вас, и посчитаю стоимость за день.</p>
+      <ContactButtons class="mt-5" />
+    </section>
+  </main>
+</Base>
