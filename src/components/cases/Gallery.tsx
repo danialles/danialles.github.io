@@ -18,6 +18,9 @@ export default function Gallery({ shots }: { shots: Shot[] }) {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   const prevBtnRef = useRef<HTMLButtonElement>(null);
   const nextBtnRef = useRef<HTMLButtonElement>(null);
+  // Tracks whether the dialog was already open on the previous render, so initial
+  // focus fires once per open — not on every ArrowLeft/ArrowRight index change.
+  const wasOpenRef = useRef(false);
 
   const openAt = (i: number) => {
     triggerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -30,9 +33,14 @@ export default function Gallery({ shots }: { shots: Shot[] }) {
   };
 
   useEffect(() => {
-    if (open === null) return;
-    // Move focus into the dialog once it mounts.
-    closeBtnRef.current?.focus();
+    if (open === null) {
+      wasOpenRef.current = false;
+      return;
+    }
+    // Move focus into the dialog only on the closed -> open transition, not on
+    // every index change while it's already open (ArrowLeft/ArrowRight).
+    if (!wasOpenRef.current) closeBtnRef.current?.focus();
+    wasOpenRef.current = true;
 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') close();

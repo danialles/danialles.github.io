@@ -44,4 +44,16 @@ describe('Gallery', () => {
     fireEvent.keyDown(window, { key: 'Escape' });
     expect(document.activeElement).toBe(trigger);
   });
+
+  it('does not steal focus back to the close button on arrow-key navigation', () => {
+    render(<Gallery shots={shots} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Открыть: Первый' }));
+
+    const nextButton = screen.getByRole('button', { name: 'Следующий' });
+    nextButton.focus();
+    expect(document.activeElement).toBe(nextButton);
+
+    fireEvent.keyDown(window, { key: 'ArrowRight' });
+    expect(document.activeElement).toBe(nextButton);
+  });
 });
