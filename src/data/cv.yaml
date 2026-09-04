@@ -10,7 +10,7 @@ contacts:
   email: timbersav91@gmail.com
   site: https://danialles.github.io
   github: ""
-location: "Удалённо · часовой пояс МСК (UTC+3)"
+location: "Удалённо · МСК (UTC+3)"
 stack:
   - group: Бэкенд
     items: [Rust (Axum, SQLx), Go, PHP (Laravel), REST, WebSocket]

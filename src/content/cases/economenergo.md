@@ -6,6 +6,10 @@ url: https://economenergo.com/
 cover: ../../assets/cases/economenergo/cover.webp
 coverAlt: Главная страница ЭкономЭнерго
 gallery:
+  - src: ../../assets/cases/economenergo/01.webp
+    alt: Страница услуги «Обследования электрооборудования» — боковое меню разделов, преимущества списком и кнопка заказа звонка
+  - src: ../../assets/cases/economenergo/02.webp
+    alt: Страница энергетических обследований с той же навигацией и блоком контактов в подвале меню
   - src: ../../assets/cases/economenergo/mobile.webp
     alt: Мобильная версия
 result: Многостраничный сайт с каталогом, формами заявок, обратным звонком и подпиской

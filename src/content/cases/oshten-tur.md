@@ -6,6 +6,10 @@ url: https://oshten-tur.ru/
 cover: ../../assets/cases/oshten-tur/cover.webp
 coverAlt: Главная страница Оштен-Тур с подборкой туров
 gallery:
+  - src: ../../assets/cases/oshten-tur/01.webp
+    alt: Каталог туров — фильтры по типу поездки слева, карточка тура с описанием, значками условий и ценой за человека
+  - src: ../../assets/cases/oshten-tur/02.webp
+    alt: Раздел гостиниц и гостевых домов — карточка дома с фотографией, удобствами и ценой
   - src: ../../assets/cases/oshten-tur/mobile.webp
     alt: Мобильная версия каталога туров
 result: Каталог туров с заявками, которым турфирма управляет сама
