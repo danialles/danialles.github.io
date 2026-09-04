@@ -1,0 +1,68 @@
+import { describe, expect, it } from 'vitest';
+import { caseFrontmatters, exists, html, read } from './helpers';
+
+describe('home page', () => {
+  const $ = html('index.html');
+
+  it('is built with Russian lang and the offer headline', () => {
+    expect($('html').attr('lang')).toBe('ru');
+    expect($('h1').first().text()).toContain('Сайты, сервисы и Telegram-боты');
+  });
+
+  it('links to the CV from the footer and shows the Telegram button', () => {
+    expect($('footer a[href="/cv/"]').text()).toBe('Резюме');
+    expect($('[data-contact="telegram"]').first().attr('href')).toMatch(/^https:\/\/t\.me\//);
+  });
+
+  it('has every section from the spec in order', () => {
+    const ids = $('main section[id]').map((_, el) => $(el).attr('id')).get();
+    expect(ids).toEqual(['services', 'cases', 'process', 'maintenance', 'tech', 'contacts']);
+  });
+
+  it('shows four service cards and the bots list', () => {
+    expect($('#services article').length).toBe(4);
+    expect($('#services [data-bots] li').length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('shows the published cases in grid order without drafts', () => {
+    const hrefs = $('#cases a[href^="/cases/"]').map((_, el) => $(el).attr('href')).get();
+    expect(hrefs[0]).toBe('/cases/illoca/');
+    expect(hrefs).not.toContain('/cases/skbereg/');
+  });
+
+  it('never mentions prices', () => {
+    expect($('main').text()).not.toMatch(/₽|руб\.|от \d+ ?000/);
+  });
+});
+
+describe('drafts', () => {
+  const drafts = caseFrontmatters().filter((c) => c.draft);
+  const sitemap = read('sitemap-0.xml');
+
+  it('exist, otherwise the checks below prove nothing', () => {
+    expect(drafts.length).toBeGreaterThan(0);
+  });
+
+  it('are absent from the sitemap and have no OG image', () => {
+    for (const { slug } of drafts) {
+      expect(sitemap, slug).not.toContain(`/cases/${slug}/`);
+      expect(exists(`og/${slug}.png`), slug).toBe(false);
+    }
+  });
+});
+
+describe('cv page', () => {
+  const $ = html('cv/index.html');
+
+  it('shows the name, the fixed headline and the PDF download with the fixed filename', () => {
+    expect($('h1').first().text()).toBe('Даниил Есков');
+    expect($('main').text()).toContain('Fullstack-разработчик · Rust / React / Go / PHP');
+    const pdf = $('a[href="/Daniil_Eskov_CV.pdf"]');
+    expect(pdf.attr('download')).toBe('Daniil_Eskov_CV.pdf');
+  });
+
+  it('has the sections in order', () => {
+    const h2 = $('main h2').map((_, el) => $(el).text().trim()).get();
+    expect(h2).toEqual(['О себе', 'Стек', 'Опыт', 'Проекты', 'Образование', 'Языки']);
+  });
+});

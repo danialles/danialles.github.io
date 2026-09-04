@@ -1,0 +1,51 @@
+name: Даниил Есков
+headline: Fullstack-разработчик · Rust / React / Go / PHP
+summary: >
+  4+ года коммерческой разработки. Делаю продукт целиком: фронт, бэк, боты,
+  инфраструктура и запуск. Работал с малым бизнесом и продуктовыми командами,
+  привык отвечать за результат, а не за отдельный слой.
+contacts:
+  telegram: https://t.me/timbelan
+  email: ""
+  site: https://USERNAME.github.io
+  github: https://github.com/USERNAME
+location: ""
+stack:
+  - group: Бэкенд
+    items: [Rust (Axum, SQLx), Go, PHP (Laravel), REST, WebSocket]
+  - group: Фронтенд
+    items: [React, TypeScript, Vue 3, Nuxt, Tailwind CSS, three.js]
+  - group: Данные и инфраструктура
+    items: [PostgreSQL, MySQL / MariaDB, Redis, nginx, Linux, GitHub Actions]
+  - group: Боты и интеграции
+    items: [Telegram Bot API, Mini Apps, платёжные API, OAuth]
+experience:
+  - period: 2022 — 2026
+    role: Fullstack-разработчик, проекты под ключ
+    org: ""
+    points:
+      - Спроектировал и запустил платформу онлайн-образования — кабинеты, оплаты, PDF-отчёты, Telegram-бот и Mini App (Rust, Vue, MariaDB).
+      - Собрал закрытую аналитическую платформу по футболу и киберспорту — сбор статистики и прогнозы; передал заказчику с кодом и документацией.
+      - Сделал сервис с подпиской ARB365 — сайт, кабинет, оплата криптовалютой, Telegram-бот.
+      - Реализовал фронтенд illoca с WebGL-сценами и шейдерами (Nuxt 3, three.js, GSAP).
+      - Разработал корпоративные сайты с админками для турфирмы и энергетической компании.
+projects:
+  - name: illoca
+    line: сайт-презентация с 3D-сценами
+    stack: Nuxt 3, three.js, GLSL, GSAP
+  - name: Платформа онлайн-образования
+    line: кабинеты, оплаты, отчёты, бот, Mini App
+    stack: Rust (Axum), Vue 3, MariaDB, Redis
+  - name: Аналитическая платформа (NDA)
+    line: статистика матчей и прогнозы
+    stack: Go, PostgreSQL, React
+  - name: ARB365
+    line: сервис с подпиской и ботом
+    stack: PHP, MySQL, Telegram Bot API
+education:
+  - period: ""
+    place: ""
+    degree: Высшее, информационная безопасность
+languages:
+  - Русский — родной
+  - Английский — технический

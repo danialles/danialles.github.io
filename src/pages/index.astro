@@ -1,0 +1,27 @@
+---
+import site from '../../site.config.mjs';
+import Base from '../layouts/Base.astro';
+import Hero from '../components/home/Hero.astro';
+import Services from '../components/home/Services.astro';
+import CaseGrid from '../components/home/CaseGrid.astro';
+import Process from '../components/home/Process.astro';
+import Maintenance from '../components/home/Maintenance.astro';
+import Tech from '../components/home/Tech.astro';
+import Contacts from '../components/home/Contacts.astro';
+import { personJsonLd } from '../lib/seo';
+---
+<Base
+  title={`${site.firstName} — сайты, сервисы и Telegram-боты под ключ`}
+  description="Разработчик под ключ: сайты, личные кабинеты, Telegram-боты и Mini App. От дизайна до запуска и сопровождения, без агентских наценок."
+  jsonLd={personJsonLd(site)}
+>
+  <main>
+    <Hero />
+    <Services />
+    <CaseGrid />
+    <Process />
+    <Maintenance />
+    <Tech />
+    <Contacts />
+  </main>
+</Base>

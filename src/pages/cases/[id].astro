@@ -1,0 +1,87 @@
+---
+import { getCollection, render } from 'astro:content';
+import { Image, getImage } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import ContactButtons from '../../components/ContactButtons.astro';
+import Gallery from '../../components/cases/Gallery';
+import { roleLabel } from '../../lib/cases';
+
+export async function getStaticPaths() {
+  const cases = await getCollection('cases', ({ data }) => !data.draft);
+  return cases.map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { data } = entry;
+const { Content } = await render(entry);
+
+// getImage() is server-only; the React island receives plain URLs.
+//
+// The first call asks for no width on purpose. `attributes` only echo the request back
+// (ask for 1600 on a 390 px screenshot and you get 1600 with the file still 390), and
+// the entry's `src` is a tracking Proxy — reading `src.width` from it marks the original
+// as referenced and leaves an unused full-size copy of every screenshot in dist. Asking
+// for the natural size is the one way to learn it without either lie.
+//
+// A source wider than 1600 px is capped by the second call; the natural-size render is
+// then never referenced, so Astro does not write it. Nothing in the gallery is that wide.
+const shots = await Promise.all(
+  data.gallery.map(async ({ src, alt }) => {
+    const natural = await getImage({ src, format: 'webp' });
+    const full = Number(natural.attributes.width) <= 1600 ? natural : await getImage({ src, format: 'webp', width: 1600 });
+    const fullWidth = Number(full.attributes.width);
+    // Below 640 px the thumbnail would be a byte-identical twin of the full render
+    // under a second hash: nothing is upscaled. Reuse the render instead.
+    const thumb = fullWidth <= 640 ? full : await getImage({ src, format: 'webp', width: 640 });
+    return {
+      full: full.src,
+      thumb: thumb.src,
+      width: Number(thumb.attributes.width),
+      height: Number(thumb.attributes.height),
+      fullWidth,
+      fullHeight: Number(full.attributes.height),
+      alt,
+    };
+  }),
+);
+---
+<Base title={`${data.title} — кейс`} description={data.result} ogImage={`/og/${entry.id}.png`}>
+  <main class="mx-auto max-w-3xl px-4 py-12">
+    <p class="text-sm text-neutral-600">
+      {data.niche}{data.year && ` · ${data.year}`} · {roleLabel(data.role)}
+    </p>
+    <h1 class="mt-2 text-4xl font-bold tracking-tight">{data.title}</h1>
+    {data.url && (
+      <a href={data.url} rel="noopener" target="_blank" class="mt-3 inline-block text-accent hover:underline">Открыть сайт ↗</a>
+    )}
+    {data.nda && <p class="mt-3 text-neutral-600">Закрытая система, под NDA</p>}
+
+    {/* The cover is the LCP element of a case page: eager and high priority, with enough
+        srcset steps that a phone at DPR ~2 does not fall through to the 1440 px file.
+        The column is max-w-3xl with px-4, hence `calc(100vw - 2rem)` below 800 px. */}
+    <Image
+      src={data.cover}
+      alt={data.coverAlt}
+      widths={[480, 768, 1080, 1440]}
+      sizes="(max-width: 799px) calc(100vw - 2rem), 768px"
+      loading="eager"
+      fetchpriority="high"
+      class="mt-8 rounded-xl border border-neutral-200"
+    />
+
+    <div class="case-body"><Content /></div>
+
+    {shots.length > 0 && (
+      <section class="mt-12">
+        <h2 class="text-2xl font-semibold">Экраны</h2>
+        <div class="mt-4"><Gallery client:visible shots={shots} /></div>
+      </section>
+    )}
+
+    <section class="mt-16 rounded-2xl bg-neutral-50 p-8">
+      <h2 class="text-2xl font-semibold">Похожая задача? Напишите</h2>
+      <p class="mt-2 text-neutral-600">Опишу, как сделал бы у вас, и посчитаю стоимость за день.</p>
+      <ContactButtons class="mt-5" />
+    </section>
+  </main>
+</Base>

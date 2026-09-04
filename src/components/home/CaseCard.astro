@@ -1,0 +1,21 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { roleLabel } from '../../lib/cases';
+
+interface Props { entry: CollectionEntry<'cases'> }
+const { entry } = Astro.props;
+const { data } = entry;
+---
+<a href={`/cases/${entry.id}/`} class="group block">
+  <Image
+    src={data.cover}
+    alt={data.coverAlt}
+    widths={[360, 480, 720, 960]}
+    sizes="(max-width: 767px) calc(100vw - 2rem), (max-width: 1279px) 480px, 320px"
+    class="aspect-[16/10] w-full rounded-xl border border-neutral-200 object-cover object-top"
+  />
+  <p class="mt-3 text-sm text-neutral-600">{data.niche} · {roleLabel(data.role)}</p>
+  <h3 class="mt-1 text-lg font-semibold group-hover:text-accent">{data.title}</h3>
+  <p class="mt-1 text-neutral-600">{data.result}</p>
+</a>
