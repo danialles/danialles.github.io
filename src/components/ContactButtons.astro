@@ -1,0 +1,21 @@
+---
+import site from '../../site.config.mjs';
+import { contactLinks } from '../lib/contacts';
+
+interface Props { class?: string }
+const { class: className = '' } = Astro.props;
+const links = contactLinks(site);
+const primary = 'bg-accent text-white hover:bg-accent-ink';
+const secondary = 'border border-neutral-300 text-neutral-900 hover:border-neutral-900';
+---
+<div class={`flex flex-wrap gap-3 ${className}`} data-contacts>
+  {links.map((link, i) => (
+    <a
+      href={link.href}
+      rel={link.kind === 'email' ? undefined : 'noopener'}
+      target={link.kind === 'email' ? undefined : '_blank'}
+      class={`inline-flex items-center rounded-full px-5 py-2.5 text-sm font-medium transition ${i === 0 ? primary : secondary}`}
+      data-contact={link.kind}
+    >{link.label}</a>
+  ))}
+</div>

@@ -8,4 +8,10 @@ describe('home page', () => {
     expect($('html').attr('lang')).toBe('ru');
     expect($('h1').first().text()).toContain('Сайты, сервисы и Telegram-боты');
   });
+
+  it('links to the CV from the footer and shows the Telegram button', () => {
+    const $ = html('index.html');
+    expect($('footer a[href="/cv/"]').text()).toBe('Резюме');
+    expect($('[data-contact="telegram"]').attr('href')).toMatch(/^https:\/\/t\.me\//);
+  });
 });
