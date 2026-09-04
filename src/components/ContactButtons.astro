@@ -8,13 +8,14 @@ const links = contactLinks(site);
 const primary = 'bg-accent text-white hover:bg-accent-ink';
 const secondary = 'border border-neutral-300 text-neutral-900 hover:border-neutral-900';
 ---
-<div class={`flex flex-wrap gap-3 ${className}`} data-contacts>
+{/* Stacked full-width on a phone, one wrapping row from 640 px up. */}
+<div class={`flex flex-col gap-3 sm:flex-row sm:flex-wrap ${className}`} data-contacts>
   {links.map((link, i) => (
     <a
       href={link.href}
       rel={link.kind === 'email' ? undefined : 'noopener'}
       target={link.kind === 'email' ? undefined : '_blank'}
-      class={`inline-flex items-center rounded-full px-5 py-2.5 text-sm font-medium transition ${i === 0 ? primary : secondary}`}
+      class={`inline-flex min-h-12 items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium transition ${i === 0 ? primary : secondary}`}
       data-contact={link.kind}
     >{link.label}</a>
   ))}

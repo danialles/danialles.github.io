@@ -32,16 +32,27 @@ const shots = await Promise.all(
 ---
 <Base title={`${data.title} — кейс`} description={data.result} ogImage={`/og/${entry.id}.png`}>
   <main class="mx-auto max-w-3xl px-4 py-12">
-    <p class="text-sm text-neutral-500">
+    <p class="text-sm text-neutral-600">
       {data.niche}{data.year && ` · ${data.year}`} · {roleLabel(data.role)}
     </p>
     <h1 class="mt-2 text-4xl font-bold tracking-tight">{data.title}</h1>
     {data.url && (
       <a href={data.url} rel="noopener" target="_blank" class="mt-3 inline-block text-accent hover:underline">Открыть сайт ↗</a>
     )}
-    {data.nda && <p class="mt-3 text-neutral-500">Закрытая система, под NDA</p>}
+    {data.nda && <p class="mt-3 text-neutral-600">Закрытая система, под NDA</p>}
 
-    <Image src={data.cover} alt={data.coverAlt} widths={[720, 1440]} sizes="(max-width: 768px) 100vw, 768px" class="mt-8 rounded-xl border border-neutral-200" />
+    {/* The cover is the LCP element of a case page: eager and high priority, with enough
+        srcset steps that a phone at DPR ~2 does not fall through to the 1440 px file.
+        The column is max-w-3xl with px-4, hence `calc(100vw - 2rem)` below 800 px. */}
+    <Image
+      src={data.cover}
+      alt={data.coverAlt}
+      widths={[480, 768, 1080, 1440]}
+      sizes="(max-width: 799px) calc(100vw - 2rem), 768px"
+      loading="eager"
+      fetchpriority="high"
+      class="mt-8 rounded-xl border border-neutral-200"
+    />
 
     <div class="case-body"><Content /></div>
 

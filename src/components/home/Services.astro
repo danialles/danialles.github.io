@@ -57,13 +57,13 @@ const services = [
         </ul>
         {s.bots && (
           <div class="mt-5 rounded-xl bg-neutral-50 p-4" data-bots>
-            <p class="text-sm font-medium text-neutral-500">Ещё боты</p>
+            <p class="text-sm font-medium text-neutral-600">Ещё боты</p>
             <ul class="mt-2 space-y-1 text-sm text-neutral-700">
               {bots.map((b) => <li><span class="font-medium">{b.name}</span> — {b.what}, {b.who}.</li>)}
             </ul>
           </div>
         )}
-        <p class="mt-auto pt-5 text-sm text-neutral-500">Стоимость зависит от задачи — напишите, посчитаю за день.</p>
+        <p class="mt-auto pt-5 text-sm text-neutral-600">Стоимость зависит от задачи — напишите, посчитаю за день.</p>
       </article>
     ))}
   </div>

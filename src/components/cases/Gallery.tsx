@@ -66,7 +66,11 @@ export default function Gallery({ shots }: { shots: Shot[] }) {
 
   if (count === 0) return null;
 
-  const navButton = 'absolute top-1/2 -translate-y-1/2 rounded-full bg-white/10 px-4 py-2 text-3xl text-white hover:bg-white/20';
+  // A dark chip, not a translucent white one: the arrows sit on top of the picture, and a
+  // white glyph on a light screenshot was unreadable. 48 px is also the minimum tap target.
+  const dialogButton =
+    'flex h-12 w-12 items-center justify-center rounded-full bg-neutral-950/70 text-3xl leading-none text-white hover:bg-neutral-950/90';
+  const navButton = `absolute top-1/2 -translate-y-1/2 ${dialogButton}`;
 
   return (
     <div>
@@ -79,7 +83,17 @@ export default function Gallery({ shots }: { shots: Shot[] }) {
               aria-label={`Открыть: ${shot.alt}`}
               className="block aspect-[4/3] w-full overflow-hidden rounded-lg border border-neutral-200 bg-neutral-100 transition hover:border-neutral-400"
             >
-              <img src={shot.thumb} alt={shot.alt} loading="lazy" className="h-full w-full object-cover object-top" />
+              {/* The box already fixes the ratio, but width/height keep the image from
+                  reflowing its cell before it loads. */}
+              <img
+                src={shot.thumb}
+                alt={shot.alt}
+                width={shot.width}
+                height={shot.height}
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full object-cover object-top"
+              />
             </button>
           </li>
         ))}
@@ -96,10 +110,12 @@ export default function Gallery({ shots }: { shots: Shot[] }) {
           <img
             src={shots[open].full}
             alt={shots[open].alt}
+            width={shots[open].width}
+            height={shots[open].height}
             className="max-h-full max-w-full rounded-lg"
             onClick={(e) => e.stopPropagation()}
           />
-          <button type="button" aria-label="Закрыть" ref={closeBtnRef} onClick={close} className="absolute right-4 top-4 text-3xl text-white">×</button>
+          <button type="button" aria-label="Закрыть" ref={closeBtnRef} onClick={close} className={`absolute right-4 top-4 ${dialogButton}`}>×</button>
           {count > 1 && (
             <>
               <button type="button" aria-label="Предыдущий" ref={prevBtnRef} className={`${navButton} left-4`}
