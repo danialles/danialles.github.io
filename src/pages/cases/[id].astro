@@ -23,8 +23,8 @@ const { Content } = await render(entry);
 // as referenced and leaves an unused full-size copy of every screenshot in dist. Asking
 // for the natural size is the one way to learn it without either lie.
 //
-// A source wider than 1600 px would cost one extra render here; nothing in the gallery
-// is, and the cap is what keeps a future oversized screenshot out of the lightbox.
+// A source wider than 1600 px is capped by the second call; the natural-size render is
+// then never referenced, so Astro does not write it. Nothing in the gallery is that wide.
 const shots = await Promise.all(
   data.gallery.map(async ({ src, alt }) => {
     const natural = await getImage({ src, format: 'webp' });
