@@ -1,10 +1,27 @@
 ---
+import site from '../../site.config.mjs';
 import Base from '../layouts/Base.astro';
-import ContactButtons from '../components/ContactButtons.astro';
+import Hero from '../components/home/Hero.astro';
+import Services from '../components/home/Services.astro';
+import CaseGrid from '../components/home/CaseGrid.astro';
+import Process from '../components/home/Process.astro';
+import Maintenance from '../components/home/Maintenance.astro';
+import Tech from '../components/home/Tech.astro';
+import Contacts from '../components/home/Contacts.astro';
+import { personJsonLd } from '../lib/seo';
 ---
-<Base title="Даниил — сайты, сервисы и Telegram-боты" description="Разработчик под ключ.">
-  <main class="mx-auto max-w-5xl px-4 py-16">
-    <h1 class="text-4xl font-bold">Сайты, сервисы и Telegram-боты, которые приносят клиентов</h1>
-    <ContactButtons class="mt-8" />
+<Base
+  title={`${site.firstName} — сайты, сервисы и Telegram-боты под ключ`}
+  description="Разработчик под ключ: сайты, личные кабинеты, Telegram-боты и Mini App. От дизайна до запуска и сопровождения, без агентских наценок."
+  jsonLd={personJsonLd(site)}
+>
+  <main>
+    <Hero />
+    <Services />
+    <CaseGrid />
+    <Process />
+    <Maintenance />
+    <Tech />
+    <Contacts />
   </main>
 </Base>

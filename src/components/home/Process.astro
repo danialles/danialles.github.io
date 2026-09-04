@@ -1,0 +1,21 @@
+---
+const steps = [
+  ['Разговор и ТЗ', 'Обсуждаем задачу и фиксируем письменно, что и когда вы получите.'],
+  ['Прототип и дизайн', 'Сначала схема страниц, потом макет. Правки — до разработки, пока они дешёвые.'],
+  ['Разработка с показами', 'Каждую неделю показываю, что готово. Никаких сюрпризов в конце.'],
+  ['Запуск, обучение, гарантия', 'Разворачиваю, показываю, как пользоваться, месяц правлю бесплатно.'],
+];
+---
+<section id="process" class="mx-auto max-w-5xl px-4 py-16">
+  <h2 class="text-3xl font-bold tracking-tight">Как работаем</h2>
+  <ol class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    {steps.map(([title, text], i) => (
+      <li class="rounded-2xl bg-neutral-50 p-6">
+        <span class="text-sm font-semibold text-accent">{i + 1}</span>
+        <h3 class="mt-1 text-lg font-semibold">{title}</h3>
+        <p class="mt-2 text-neutral-600">{text}</p>
+      </li>
+    ))}
+  </ol>
+  <p class="mt-6 text-neutral-600">Честно про сроки: лендинг — 1–2 недели, сервис — от месяца.</p>
+</section>

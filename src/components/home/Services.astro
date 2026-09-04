@@ -1,0 +1,70 @@
+---
+import { bots } from '../../data/bots';
+
+const services = [
+  {
+    title: 'Сайт для бизнеса',
+    lead: 'Лендинг, корпоративный сайт, каталог.',
+    items: [
+      'Дизайн и вёрстка под телефон и компьютер',
+      'Формы заявок с уведомлением в Telegram',
+      'Аналитика: Яндекс.Метрика и цели',
+      'Готов к рекламе и поиску: заголовки, разметка, скорость',
+    ],
+  },
+  {
+    title: 'Telegram-бот и Mini App',
+    lead: 'Запись, заказы, уведомления, каталог — внутри мессенджера. MAX и VK тоже.',
+    items: [
+      'Запись и напоминания клиентам',
+      'Заказы и оплата прямо в чате',
+      'Уведомления менеджерам о заявках',
+      'Mini App — полноценный интерфейс внутри Telegram',
+    ],
+    bots: true,
+  },
+  {
+    title: 'Сервис, личный кабинет, админка',
+    lead: 'CRM, учёт, платежи, интеграции с тем, что у вас уже есть.',
+    items: [
+      'Кабинеты клиентов и сотрудников',
+      'Приём платежей и подписки',
+      'Админка с ролями и отчётами',
+      'Интеграции: CRM, платёжные системы, почта, 1С',
+    ],
+  },
+  {
+    title: 'Сопровождение и развитие',
+    lead: 'Чтобы продукт продолжал приносить клиентов после запуска.',
+    items: [
+      'Обновления и поддержка',
+      'Статьи и страницы под поисковые запросы',
+      'Рекламные кампании в Яндексе и VK',
+      'Раз в месяц — отчёт: что пришло, что менять',
+    ],
+  },
+];
+---
+<section id="services" class="mx-auto max-w-5xl px-4 py-16">
+  <h2 class="text-3xl font-bold tracking-tight">Что делаю</h2>
+  <div class="mt-8 grid gap-6 sm:grid-cols-2">
+    {services.map((s) => (
+      <article class="flex flex-col rounded-2xl border border-neutral-200 p-6">
+        <h3 class="text-xl font-semibold">{s.title}</h3>
+        <p class="mt-1 text-neutral-600">{s.lead}</p>
+        <ul class="mt-4 space-y-2 text-neutral-700">
+          {s.items.map((item) => <li class="flex gap-2"><span class="text-accent">•</span><span>{item}</span></li>)}
+        </ul>
+        {s.bots && (
+          <div class="mt-5 rounded-xl bg-neutral-50 p-4" data-bots>
+            <p class="text-sm font-medium text-neutral-500">Ещё боты</p>
+            <ul class="mt-2 space-y-1 text-sm text-neutral-700">
+              {bots.map((b) => <li><span class="font-medium">{b.name}</span> — {b.what}, {b.who}.</li>)}
+            </ul>
+          </div>
+        )}
+        <p class="mt-auto pt-5 text-sm text-neutral-500">Стоимость зависит от задачи — напишите, посчитаю за день.</p>
+      </article>
+    ))}
+  </div>
+</section>
