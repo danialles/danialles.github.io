@@ -3,7 +3,7 @@
 export default {
   // The repo lives in a dedicated GitHub organization, not on a personal account:
   // the résumé must not be reachable from the owner's personal profile.
-  site: 'https://daniil-eskov.github.io',
+  site: 'https://daneskov.github.io',
   name: 'Даниил Еськов',
   firstName: 'Даниил',
   telegram: 'https://t.me/timbelan',
