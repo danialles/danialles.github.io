@@ -117,9 +117,17 @@
   портфолио, не против?». Решение Даниила, не блокер.
 
 **Формат хранения:** `src/content/cases/<slug>.md` с полями `title`, `niche`, `role`,
-`year`, `url` (опционально), `nda` (bool), `cover`, `result`, `order`, `draft`; тело —
-разделы «Задача / Что сделал / Результат». Скриншоты — `public/cases/<slug>/`.
+`year` (опционально), `url` (опционально), `nda` (bool), `cover` + `coverAlt`, `gallery`
+(список `src` + `alt`), `result`, `stack` (опционально), `order`, `draft`; тело —
+разделы «Задача / Что сделал / Результат». Скриншоты — `src/assets/cases/<slug>/`
+(не `public/`: из `src/assets` Astro сам режет размеры и отдаёт WebP).
 Добавить кейс = добавить файл и папку.
+
+**Как снимаются скриншоты.** Обычные сайты — headless Chrome скриптом
+(`scripts/shoot.sh`), затем `scripts/to-webp.mjs`. illoca headless не берёт: WebGL-сцена
+не рисуется, поверх висит cookie-баннер — снимать вручную в живом браузере. Скриншоты
+анонимного кейса перед сохранением проходят через `scripts/redact.mjs` (размытие
+прямоугольника с брендом).
 
 ## 5. Страница `/cv` и PDF
 
@@ -144,8 +152,10 @@
 
 ## 6. Технология и репозиторий
 
-**Стек:** Astro 5 + React 19 (острова только там, где есть интерактив: галерея кейса)
-+ Tailwind 4 + TypeScript. Typst для PDF. Никаких CMS, БД, серверов.
+**Стек:** Astro 7 (актуальный мажор на 04.09.2026; требует Node ≥ 22.12, коллекции —
+только через `loader`, zod 4) + React 19 (острова только там, где есть интерактив:
+галерея кейса) + Tailwind 4 + TypeScript. Typst 0.14 для PDF. Никаких CMS, БД,
+серверов.
 
 Почему не SPA на Vite + React: пустой HTML до загрузки JS и костыль с `404.html` под
 роутинг противоречат тому, что сайт обещает клиентам (разметка, скорость). Почему не
@@ -156,26 +166,39 @@
 кода для технического заказчика и работодателя. README на русском.
 
 ```
+site.config.mjs     адрес сайта, имя, контакты, город, счётчик Метрики — одно место
 src/
-  pages/            index.astro, cv.astro, cases/[slug].astro
+  pages/            index.astro, cv.astro, cases/[id].astro, 404.astro,
+                    robots.txt.ts, og/[slug].png.ts (OG-картинки при сборке)
+  layouts/          Base.astro — head, шапка, подвал
   components/       Astro-компоненты (статика) + React (галерея)
   content/cases/    *.md — по одному на кейс
-  data/cv.yaml      единый источник для /cv и PDF
+  assets/cases/     скриншоты по слагам, оптимизирует Astro
+  data/cv.yaml      единый источник для /cv и PDF; data/bots.ts — список «Ещё боты»
+  lib/              чистые функции (контакты, SEO, OG, CV) — под юнит-тесты
   styles/
-public/
-  cases/<slug>/     скриншоты WebP
-  CNAME             домен
+public/             favicon, CNAME (когда появится домен)
 cv/resume.typ       Typst-шаблон
+scripts/            shoot.sh, to-webp.mjs, redact.mjs — конвейер скриншотов
+tests/unit          vitest по lib/ и галерее
+tests/dist          проверки собранного dist/ (SEO, заголовки, запретные слова)
 .github/workflows/deploy.yml
 ```
 
-**Деплой:** push в `main` → Action: `npm ci` → `astro build` →
-`typst compile cv/resume.typ dist/resume.pdf` → публикация в Pages. Ручных шагов нет,
-превью PR не делаем.
+**Деплой:** push в `main` → Action: `npm ci` → юнит-тесты → `astro check` →
+`astro build` → `typst compile --root . cv/resume.typ dist/resume.pdf` → тесты по
+`dist/` → публикация в Pages. Ручных шагов нет, превью PR не делаем.
+
+**Сторожа в тестах по `dist/`** — то, что нельзя доверить памяти: в HTML нет слова
+«MainExperts» и ссылки на него (анонимность), нет «October» (позиционирование), нет
+`<?php`, нет незаполненных значений из `site.config.mjs`; у каждого кейса есть три
+раздела; canonical и `og:image` абсолютные; `sitemap-index.xml` и `robots.txt` на
+месте; пункты опыта в CV — в прошедшем времени.
 
 **SEO и качество — сайт как доказательство обещаний:** семантическая разметка,
 `<title>`/`description` на каждой странице, Open Graph-картинки (карточка при отправке
-ссылки в Telegram/MAX), `sitemap.xml`, `robots.txt`, JSON-LD `Person`. Цель — Lighthouse
+ссылки в Telegram/MAX; генерируются при сборке из заголовка страницы — `/og/<slug>.png`,
+1200×630), `sitemap-index.xml`, `robots.txt`, JSON-LD `Person`. Цель — Lighthouse
 100/100/100/100 на главной, проверяется перед первой публикацией. Яндекс.Метрика —
 счётчик для отслеживания заходов по рассылкам.
 
