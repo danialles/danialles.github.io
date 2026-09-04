@@ -32,4 +32,16 @@ describe('Gallery', () => {
     fireEvent.keyDown(window, { key: 'Escape' });
     expect(screen.queryByRole('dialog')).toBeNull();
   });
+
+  it('moves focus into the dialog on open and restores it on close', () => {
+    render(<Gallery shots={shots} />);
+    const trigger = screen.getByRole('button', { name: 'Открыть: Первый' });
+    trigger.focus();
+
+    fireEvent.click(trigger);
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Закрыть' }));
+
+    fireEvent.keyDown(window, { key: 'Escape' });
+    expect(document.activeElement).toBe(trigger);
+  });
 });
