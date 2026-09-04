@@ -21,5 +21,6 @@ describe('src/data/cv.yaml', () => {
     for (const job of cv.experience) {
       for (const point of job.points) expect(point, point).not.toMatch(presentTense);
     }
+    for (const line of cv.projects.map((p) => p.line)) expect(line, line).not.toMatch(presentTense);
   });
 });
