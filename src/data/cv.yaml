@@ -6,10 +6,11 @@ summary: >
   привык отвечать за результат, а не за отдельный слой.
 contacts:
   telegram: https://t.me/timbelan
+  phone: "+7 958 546-64-92"
   email: timbersav91@gmail.com
   site: https://danialles.github.io
   github: ""
-location: ""
+location: "Удалённо · часовой пояс МСК (UTC+3)"
 stack:
   - group: Бэкенд
     items: [Rust (Axum, SQLx), Go, PHP (Laravel), REST, WebSocket]

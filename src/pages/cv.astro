@@ -19,7 +19,7 @@ const h2 = 'mt-10 text-xl font-semibold tracking-tight print:mt-6 print:break-af
         <ContactButtons />
       </div>
       <p class="mt-3 hidden text-sm text-neutral-600 print:block">
-        {[cv.contacts.telegram, cv.contacts.email, cv.contacts.site].filter(Boolean).join(' · ')}
+        {[cv.contacts.telegram, cv.contacts.phone, cv.contacts.email, cv.contacts.site, cv.location].filter(Boolean).join(' · ')}
       </p>
     </header>
 

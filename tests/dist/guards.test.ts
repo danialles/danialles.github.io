@@ -28,7 +28,9 @@ describe('site config', () => {
   const $ = html('index.html');
 
   it('is complete', () => {
-    expect($('#contacts [data-contact]').length).toBe(3);
+    // Three channels is the floor the spec sets, not a cap: MAX joins as a fourth
+    // button the day its profile link exists.
+    expect($('#contacts [data-contact]').length).toBeGreaterThanOrEqual(3);
     expect($('#contacts [data-location]').text().trim().length).toBeGreaterThan(0);
   });
 });

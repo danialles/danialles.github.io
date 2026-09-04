@@ -16,6 +16,7 @@
 #let muted = luma(90)
 #let contacts = {
   let out = (link(cv.contacts.telegram, "Telegram"),)
+  if cv.contacts.phone != "" { out.push(link("tel:" + cv.contacts.phone.replace(" ", "").replace("-", ""), cv.contacts.phone)) }
   if cv.contacts.email != "" { out.push(link("mailto:" + cv.contacts.email, cv.contacts.email)) }
   out.push(link(cv.contacts.site, cv.contacts.site.replace("https://", "")))
   if cv.contacts.github != "" { out.push(link(cv.contacts.github, "GitHub")) }

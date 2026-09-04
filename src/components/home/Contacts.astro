@@ -1,11 +1,13 @@
 ---
 import site from '../../../site.config.mjs';
 import ContactButtons from '../ContactButtons.astro';
-const where = [site.city, site.timezone].filter(Boolean).join(', ');
+// The city is optional: the time zone alone already answers what a client actually
+// asks («когда он на связи»), so the line renders as soon as either one is set.
+const where = [site.city, site.timezone && `часовой пояс ${site.timezone}`].filter(Boolean).join(' · ');
 ---
 <section id="contacts" class="mx-auto max-w-5xl px-4 py-16">
   <h2 class="text-3xl font-bold tracking-tight">Написать</h2>
   <p class="mt-2 text-neutral-600">Опишите задачу в двух словах — отвечу в тот же день.</p>
   <ContactButtons class="mt-6" />
-  {where && <p data-location class="mt-4 text-sm text-neutral-600">{where}</p>}
+  {where && <p data-location class="mt-4 text-sm text-neutral-600">Работаю удалённо · {where}</p>}
 </section>

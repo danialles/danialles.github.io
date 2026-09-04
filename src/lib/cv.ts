@@ -13,6 +13,7 @@ export const cvSchema = z.object({
   summary: z.string().min(1),
   contacts: z.object({
     telegram: z.url(),
+    phone: z.string(),
     email: z.union([z.email(), z.literal('')]),
     site: z.url(),
     github: z.union([z.url(), z.literal('')]),
