@@ -1,0 +1,22 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter";
+
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  /* One accent colour for the whole site (spec §6 «Визуал»). */
+  --color-accent: oklch(52% 0.2 262);
+  --color-accent-ink: oklch(40% 0.17 262);
+}
+
+html { scroll-behavior: smooth; }
+
+/* Markdown body of a case page (rendered by <Content />). */
+.case-body h2 { margin-top: 2.5rem; font-size: 1.5rem; font-weight: 600; letter-spacing: -0.01em; }
+.case-body p, .case-body ul { margin-top: 1rem; line-height: 1.7; color: var(--color-neutral-700); }
+.case-body ul { padding-left: 1.25rem; list-style: disc; }
+.case-body li + li { margin-top: 0.4rem; }
+
+@media print {
+  @page { margin: 1.5cm; }
+  a { text-decoration: none; color: inherit; }
+}
