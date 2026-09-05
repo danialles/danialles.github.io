@@ -4,13 +4,23 @@ import { bots } from '../../data/bots';
 const services = [
   {
     title: 'Сайт для бизнеса',
-    lead: 'Лендинг, корпоративный сайт, каталог.',
+    lead: 'Лендинг, корпоративный сайт, каталог. Пишу кодом на Astro, Nuxt и React — не собираю в конструкторе.',
     items: [
       'Дизайн и вёрстка под телефон и компьютер',
+      'Админка под ваш бизнес: только нужные поля и ничего лишнего',
       'Формы заявок с уведомлением в Telegram',
       'Аналитика: Яндекс.Метрика и цели',
       'Готов к рекламе и поиску: заголовки, разметка, скорость',
     ],
+    why: {
+      title: 'Почему не WordPress и не Tilda',
+      points: [
+        ['Скорость', 'страницы готовы заранее и отдаются целиком — без базы, плагинов и сборки на каждый заход. Быстрый сайт выше в поиске и дешевле в рекламе: посетитель не уходит с загрузки.'],
+        ['Своя админка', 'в WordPress нужное ищут среди сотни чужих настроек. Я делаю панель под ваши задачи: «добавить тур — даты, цена, фото». Разбираться не нужно, обучение — пять минут.'],
+        ['Сайт ваш', 'Tilda — аренда: перестали платить, сайт выключился. Здесь код, домен и сервер на ваших аккаунтах, переносятся куда угодно.'],
+        ['Без потолка', 'конструктор упирается в первую нестандартную задачу — калькулятор, фильтры каталога, обмен с 1С. Здесь таких границ нет.'],
+      ],
+    },
   },
   {
     title: 'Telegram-бот и Mini App',
@@ -47,7 +57,9 @@ const services = [
 ---
 <section id="services" class="mx-auto max-w-5xl px-4 py-16">
   <h2 class="text-3xl font-bold tracking-tight">Что делаю</h2>
-  <div class="mt-8 grid gap-6 sm:grid-cols-2">
+  {/* items-start: the cards differ in length, and stretching them to a common row height
+      opened a hole between the content and the closing line of the shorter one. */}
+  <div class="mt-8 grid items-start gap-6 sm:grid-cols-2">
     {services.map((s) => (
       <article class="flex flex-col rounded-2xl border border-neutral-200 p-6">
         <h3 class="text-xl font-semibold">{s.title}</h3>
@@ -55,6 +67,16 @@ const services = [
         <ul class="mt-4 space-y-2 text-neutral-700">
           {s.items.map((item) => <li class="flex gap-2"><span class="text-accent" aria-hidden="true">•</span><span>{item}</span></li>)}
         </ul>
+        {s.why && (
+          <div class="mt-5 rounded-xl bg-neutral-50 p-4" data-why>
+            <p class="text-sm font-medium text-neutral-600">{s.why.title}</p>
+            <ul class="mt-2 space-y-2 text-sm text-neutral-700">
+              {s.why.points.map(([label, text]) => (
+                <li><span class="font-medium text-neutral-900">{label}</span> — {text}</li>
+              ))}
+            </ul>
+          </div>
+        )}
         {s.bots && (
           <div class="mt-5 rounded-xl bg-neutral-50 p-4" data-bots>
             <p class="text-sm font-medium text-neutral-600">Ещё боты</p>
