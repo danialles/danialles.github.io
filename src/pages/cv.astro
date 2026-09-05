@@ -14,7 +14,9 @@ const h2 = 'mt-10 text-xl font-semibold tracking-tight print:mt-6 print:break-af
     <header>
       <h1 class="text-4xl font-bold tracking-tight">{cv.name}</h1>
       <p class="mt-1 text-lg text-neutral-600">{cv.headline}</p>
-      <div class="mt-5 flex flex-wrap items-center gap-3 print:hidden">
+      {/* items-start on a phone: without it the nested ContactButtons column stretches to
+          the full width and centres its buttons, which knocks them out of line with the PDF one. */}
+      <div class="mt-5 flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap sm:items-center print:hidden">
         <a href="/Daniil_Eskov_CV.pdf" download="Daniil_Eskov_CV.pdf" class="inline-flex min-h-12 items-center justify-center rounded-full bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-neutral-700">Скачать PDF</a>
         <ContactButtons />
       </div>
