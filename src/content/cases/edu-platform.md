@@ -5,6 +5,10 @@ role: turnkey
 cover: ../../assets/cases/edu-platform/cover.webp
 coverAlt: "Личный кабинет: заполненность профиля, блоки диагностики и подсказки о том, чего не хватает (название скрыто)"
 gallery:
+  # The cover is a 16:10 crop of this same screen; here it stands whole, with the
+  # bottom rows the crop cuts off.
+  - src: ../../assets/cases/edu-platform/00.webp
+    alt: "Личный кабинет целиком: вкладки профиля, услуг, базы знаний и семьи, подсказки о незаполненных данных, тринадцать блоков профиля и загрузка документов"
   - src: ../../assets/cases/edu-platform/01.webp
     alt: Результат диагностики — балл риска на шкале с пояснением и разбор по ключевым рекомендациям
   - src: ../../assets/cases/edu-platform/02.webp
