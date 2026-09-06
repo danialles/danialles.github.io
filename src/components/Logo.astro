@@ -1,24 +1,27 @@
 ---
 import site from '../../site.config.mjs';
 
-// The mark is the hero's dot field compressed into a 3×3 grid: one accent dot sits off-centre
-// and slides on hover, which is the whole animation — a logo that twitches is a distraction.
+// The mark is the hero's dot field compressed to a 3×3 grid — no tile behind it, so it sits
+// on the white page instead of punching a dark hole in it. The accent dot slides on hover;
+// that is the whole animation, a logo that twitches is a distraction.
 interface Props { class?: string }
 const { class: className = '' } = Astro.props;
 ---
-<a href="/" class={`group inline-flex items-center gap-2.5 ${className}`} aria-label={`${site.firstName} — на главную`}>
-  <span class="inline-flex h-9 w-9 items-center justify-center rounded-[0.7rem] bg-neutral-900 shadow-[0_1px_2px_rgba(0,0,0,.18),0_6px_16px_-10px_rgba(0,0,0,.7)] transition-transform duration-200 ease-[cubic-bezier(0.2,0,0,1)] group-hover:-translate-y-0.5">
-    <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" aria-hidden="true">
-      <g fill="#fff" fill-opacity="0.45">
-        <circle cx="5" cy="5" r="1.6" /><circle cx="12" cy="5" r="1.6" />
-        <circle cx="5" cy="12" r="1.6" /><circle cx="12" cy="12" r="1.6" /><circle cx="19" cy="12" r="1.6" />
-        <circle cx="5" cy="19" r="1.6" /><circle cx="12" cy="19" r="1.6" /><circle cx="19" cy="19" r="1.6" />
-      </g>
-      <circle
-        cx="19" cy="5" r="2.4" fill="var(--color-accent)"
-        class="origin-center transition-transform duration-300 ease-[cubic-bezier(0.2,0,0,1)] group-hover:translate-x-[-7px] group-hover:translate-y-[7px]"
-      />
-    </svg>
-  </span>
-  <span class="text-lg font-semibold tracking-tight">{site.firstName}</span>
+{/* h-10 w-10 keeps the tap target at 40px even though the mark itself is 24px. */}
+<a
+  href="/"
+  class={`group -m-2 inline-flex h-10 w-10 items-center justify-center rounded-xl p-2 transition-colors duration-200 hover:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${className}`}
+  aria-label={`${site.firstName} — на главную`}
+>
+  <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" aria-hidden="true">
+    <g class="fill-neutral-400 transition-colors duration-200 group-hover:fill-neutral-500">
+      <circle cx="4.5" cy="4.5" r="1.5" /><circle cx="12" cy="4.5" r="1.5" />
+      <circle cx="4.5" cy="12" r="1.5" /><circle cx="12" cy="12" r="1.5" /><circle cx="19.5" cy="12" r="1.5" />
+      <circle cx="4.5" cy="19.5" r="1.5" /><circle cx="12" cy="19.5" r="1.5" /><circle cx="19.5" cy="19.5" r="1.5" />
+    </g>
+    <circle
+      cx="19.5" cy="4.5" r="2.6" fill="var(--color-accent)"
+      class="origin-center transition-transform duration-300 ease-[cubic-bezier(0.2,0,0,1)] group-hover:translate-x-[-7.5px] group-hover:translate-y-[7.5px]"
+    />
+  </svg>
 </a>
