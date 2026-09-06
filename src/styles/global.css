@@ -23,6 +23,26 @@ p { text-wrap: pretty; }
 }
 .js [data-reveal][data-revealed] { opacity: 1; transform: none; }
 
+/* Section headings assemble from scattered letters. The script sets --dx/--dy per letter;
+   the text itself stays in the DOM, so selection, search and screen readers see it whole. */
+/* Hidden only until the split runs, so the whole heading never flashes in before its letters. */
+.js [data-assemble] { opacity: 0; }
+.js [data-assemble][data-split] { opacity: 1; }
+.js [data-assemble] > span { display: inline-block; white-space: pre; }
+.js [data-assemble] > span > span {
+  display: inline-block;
+  opacity: 0;
+  filter: blur(5px);
+  transform: translate(var(--dx), var(--dy)) scale(0.86) rotate(var(--rot));
+  transition: opacity 0.45s cubic-bezier(0.2, 0, 0, 1), transform 0.55s cubic-bezier(0.2, 0, 0, 1),
+    filter 0.45s cubic-bezier(0.2, 0, 0, 1);
+}
+.js [data-assemble][data-revealed] > span > span {
+  opacity: 1;
+  filter: blur(0);
+  transform: none;
+}
+
 /* A soft oval mask keeps the hero grid from ending on a visible rectangular edge. */
 .hero-grid {
   mask-image: radial-gradient(120% 90% at 30% 30%, #000 35%, transparent 78%);

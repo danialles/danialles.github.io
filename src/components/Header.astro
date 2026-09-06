@@ -1,13 +1,13 @@
 ---
-import site from '../../site.config.mjs';
+import Logo from './Logo.astro';
 ---
 <header class="print:hidden">
   <nav class="mx-auto flex max-w-5xl items-center justify-between px-4 py-5" aria-label="Основная навигация">
-    <a href="/" class="text-lg font-semibold tracking-tight">{site.firstName}</a>
+    <Logo />
     <ul class="flex gap-6 text-sm text-neutral-600">
-      <li><a href="/#cases" class="hover:text-neutral-900">Кейсы</a></li>
-      <li><a href="/#process" class="hover:text-neutral-900">Как работаем</a></li>
-      <li><a href="/#contacts" class="hover:text-neutral-900">Написать</a></li>
+      <li><a href="/#cases" class="transition-colors duration-200 hover:text-neutral-900">Кейсы</a></li>
+      <li><a href="/#process" class="transition-colors duration-200 hover:text-neutral-900">Как работаем</a></li>
+      <li><a href="/#contacts" class="transition-colors duration-200 hover:text-neutral-900">Написать</a></li>
     </ul>
   </nav>
 </header>

@@ -6,7 +6,7 @@ import CaseCard from './CaseCard.astro';
 const cases = sortCases(await getCollection('cases'));
 ---
 <section id="cases" class="mx-auto max-w-5xl px-4 py-16">
-  <h2 class="text-3xl font-bold tracking-tight">Кейсы</h2>
+  <h2 data-assemble class="text-3xl font-bold tracking-tight">Кейсы</h2>
   <p class="mt-2 text-neutral-600">Что уже сделано и как это работает у клиентов.</p>
   <div class="mt-8 grid gap-x-6 gap-y-10 md:grid-cols-2 xl:grid-cols-3">
     {/* The stagger restarts per row of three so the last card never waits on the whole grid. */}

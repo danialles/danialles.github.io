@@ -2,6 +2,7 @@
 title: Оштен-Тур
 niche: "Сайт турфирмы: туры по Адыгее и Кавказу"
 role: fullstack
+year: 2021
 url: https://oshten-tur.ru/
 cover: ../../assets/cases/oshten-tur/cover.webp
 coverAlt: Главная страница Оштен-Тур с подборкой туров

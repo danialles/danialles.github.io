@@ -58,7 +58,40 @@ const jsonLdText = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : ''
     <Footer />
     <script is:inline>
       (() => {
-        const items = document.querySelectorAll('[data-reveal]');
+        // Headings assemble letter by letter. Split by words first: a bare chain of inline
+        // letters would let a line break land inside a word.
+        if (!document.documentElement.classList.contains('js')) return;
+        const headings = document.querySelectorAll('[data-assemble]');
+        try {
+        for (const heading of headings) {
+          const words = heading.textContent.trim().split(/(\s+)/);
+          heading.textContent = '';
+          let n = 0;
+          for (const word of words) {
+            const wrap = document.createElement('span');
+            for (const char of word) {
+              const glyph = document.createElement('span');
+              glyph.textContent = char;
+              glyph.style.setProperty('--dx', (Math.random() * 24 - 12).toFixed(1) + 'px');
+              glyph.style.setProperty('--dy', (Math.random() * 22 - 6).toFixed(1) + 'px');
+              glyph.style.setProperty('--rot', (Math.random() * 10 - 5).toFixed(1) + 'deg');
+              glyph.style.transitionDelay = Math.min(n * 22, 700) + 'ms';
+              wrap.appendChild(glyph);
+              n++;
+            }
+            heading.appendChild(wrap);
+          }
+          heading.setAttribute('data-split', '');
+        }
+        } catch (e) {
+          // A heading that failed to split must still be readable — show them all as they are.
+          for (const heading of headings) heading.setAttribute('data-split', '');
+        }
+      })();
+    </script>
+    <script is:inline>
+      (() => {
+        const items = document.querySelectorAll('[data-reveal], [data-assemble]');
         if (!items.length) return;
         // `.js` is set in <head> only when the reveal can actually run; without it the
         // elements were never hidden and there is nothing to reveal.
