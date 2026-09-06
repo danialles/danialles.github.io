@@ -32,8 +32,9 @@ describe('src/data/cv.yaml', () => {
     expect(cv.contacts.site).toBe(site.site);
     expect(cv.contacts.telegram).toBe(site.telegram);
     expect(cv.contacts.github).toBe(site.github);
-    expect(cv.contacts.phone).toBe(site.phone);
     expect(cv.contacts.email).toBe(site.email);
+    // The phone lives in the CV only: the site itself offers Telegram, MAX and email.
+    expect(cv.contacts.phone).not.toBe('');
   });
 });
 
