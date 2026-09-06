@@ -1,8 +1,22 @@
 ---
 import { bots } from '../../data/bots';
+import Icon from '../Icon.astro';
+import type { IconName } from '../../lib/icons';
 
-const services = [
+interface Service {
+  icon: IconName;
+  title: string;
+  lead: string;
+  items: string[];
+  /** Objection handling — only the website card carries it today. */
+  why?: { title: string; points: [string, string][] };
+  /** Renders the «Ещё боты» list from src/data/bots.ts. */
+  bots?: boolean;
+}
+
+const services: Service[] = [
   {
+    icon: 'globe',
     title: 'Сайт для бизнеса',
     lead: 'Лендинг, корпоративный сайт, каталог. Пишу кодом на Astro, Nuxt и React — не собираю в конструкторе.',
     items: [
@@ -23,6 +37,7 @@ const services = [
     },
   },
   {
+    icon: 'chat',
     title: 'Telegram-бот и Mini App',
     lead: 'Запись, заказы, уведомления, каталог — внутри мессенджера. MAX и VK тоже.',
     items: [
@@ -34,6 +49,7 @@ const services = [
     bots: true,
   },
   {
+    icon: 'panel',
     title: 'Сервис, личный кабинет, админка',
     lead: 'CRM, учёт, платежи, интеграции с тем, что у вас уже есть.',
     items: [
@@ -44,6 +60,7 @@ const services = [
     ],
   },
   {
+    icon: 'growth',
     title: 'Сопровождение и развитие',
     lead: 'Чтобы продукт продолжал приносить клиентов после запуска.',
     items: [
@@ -60,9 +77,16 @@ const services = [
   {/* items-start: the cards differ in length, and stretching them to a common row height
       opened a hole between the content and the closing line of the shorter one. */}
   <div class="mt-8 grid items-start gap-6 sm:grid-cols-2">
-    {services.map((s) => (
-      <article class="flex flex-col rounded-2xl border border-neutral-200 p-6">
-        <h3 class="text-xl font-semibold">{s.title}</h3>
+    {services.map((s, i) => (
+      <article
+        data-reveal
+        data-reveal-index={i}
+        class="flex flex-col rounded-2xl border border-neutral-200 p-6 transition-[border-color,box-shadow,translate] duration-200 ease-[cubic-bezier(0.2,0,0,1)] hover:-translate-y-0.5 hover:border-neutral-300 hover:shadow-[0_1px_2px_rgba(0,0,0,.04),0_14px_30px_-18px_rgba(0,0,0,.35)]"
+      >
+        <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
+          <Icon name={s.icon} />
+        </span>
+        <h3 class="mt-4 text-xl font-semibold">{s.title}</h3>
         <p class="mt-1 text-neutral-600">{s.lead}</p>
         <ul class="mt-4 space-y-2 text-neutral-700">
           {s.items.map((item) => <li class="flex gap-2"><span class="text-accent" aria-hidden="true">•</span><span>{item}</span></li>)}

@@ -1,14 +1,19 @@
 ---
 import site from '../../../site.config.mjs';
 import ContactButtons from '../ContactButtons.astro';
+import HeroGrid from './HeroGrid.astro';
 ---
-<section class="mx-auto max-w-5xl px-4 pb-16 pt-12 sm:pt-20">
-  <h1 class="max-w-3xl text-4xl font-bold leading-tight tracking-tight sm:text-6xl">
-    Сайты, сервисы и Telegram-боты, которые приносят клиентов
-  </h1>
-  <p class="mt-6 max-w-2xl text-lg text-neutral-600 sm:text-xl">
-    {site.firstName}, разработчик. Делаю под ключ: от дизайна до запуска и сопровождения.
-    За четыре года — от лендинга до платформы с оплатами, отчётами и ботом.
-  </p>
-  <ContactButtons class="mt-8" />
-</section>
+{/* isolate keeps the canvas behind the text without pulling it behind the page background. */}
+<div class="relative isolate overflow-hidden">
+  <HeroGrid />
+  <section class="mx-auto max-w-5xl px-4 pb-16 pt-12 sm:pt-20">
+    <h1 data-reveal class="max-w-3xl text-4xl font-bold leading-tight tracking-tight sm:text-6xl">
+      Сайты, сервисы и Telegram-боты, которые приносят клиентов
+    </h1>
+    <p data-reveal data-reveal-index="1" class="mt-6 max-w-2xl text-lg text-neutral-600 sm:text-xl">
+      {site.firstName}, разработчик. Делаю под ключ: от дизайна до запуска и сопровождения.
+      За четыре года — от лендинга до платформы с оплатами, отчётами и ботом.
+    </p>
+    <ContactButtons class="mt-8" data-reveal data-reveal-index="2" />
+  </section>
+</div>

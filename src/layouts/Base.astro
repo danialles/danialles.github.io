@@ -41,6 +41,13 @@ const jsonLdText = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : ''
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     {jsonLd && <script is:inline type="application/ld+json" set:html={jsonLdText} />}
+    {/* Runs before first paint, so revealed elements never flash in and then hide. The class
+        gates the hidden state: no script, no observer or motion turned down — no hiding. */}
+    <script is:inline>
+      if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('js');
+      }
+    </script>
   </head>
   <body class="bg-white font-sans text-neutral-900 antialiased">
     {/* Counter sits at the top of <body>, not in <head>: its <noscript><div><img> fallback
@@ -49,5 +56,25 @@ const jsonLdText = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : ''
     <Header />
     <slot />
     <Footer />
+    <script is:inline>
+      (() => {
+        const items = document.querySelectorAll('[data-reveal]');
+        if (!items.length) return;
+        // `.js` is set in <head> only when the reveal can actually run; without it the
+        // elements were never hidden and there is nothing to reveal.
+        if (!document.documentElement.classList.contains('js')) return;
+        const io = new IntersectionObserver((entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            const el = entry.target;
+            const step = Math.min(Number(el.dataset.revealIndex || 0), 5) * 70;
+            el.style.transitionDelay = step + 'ms';
+            el.setAttribute('data-revealed', '');
+            io.unobserve(el);
+          }
+        }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+        for (const el of items) io.observe(el);
+      })();
+    </script>
   </body>
 </html>

@@ -1,18 +1,29 @@
 ---
+import Icon from '../Icon.astro';
+
 const steps = [
-  ['Разговор и ТЗ', 'Обсуждаем задачу и фиксируем письменно, что и когда вы получите.'],
-  ['Прототип и дизайн', 'Сначала схема страниц, потом макет. Правки — до разработки, пока они дешёвые.'],
-  ['Разработка с показами', 'Собрал кусок — присылаю ссылку: иногда в тот же день, иногда через несколько. Правки вносим по ходу, а не в конце.'],
-  ['Запуск, обучение, гарантия', 'Разворачиваю, показываю, как пользоваться, месяц правлю бесплатно.'],
-];
+  ['chat', 'Разговор и ТЗ', 'Обсуждаем задачу и фиксируем письменно, что и когда вы получите.'],
+  ['wireframe', 'Прототип и дизайн', 'Сначала схема страниц, потом макет. Правки — до разработки, пока они дешёвые.'],
+  ['code', 'Разработка с показами', 'Присылаю ссылку, как только есть что показать. Правки — по ходу.'],
+  ['launch', 'Запуск, обучение, гарантия', 'Разворачиваю, показываю, как пользоваться, месяц правлю бесплатно.'],
+] as const;
 ---
 <section id="process" class="mx-auto max-w-5xl px-4 py-16">
   <h2 class="text-3xl font-bold tracking-tight">Как работаем</h2>
   <ol class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-    {steps.map(([title, text], i) => (
-      <li class="rounded-2xl bg-neutral-50 p-6">
-        <span class="text-sm font-semibold text-accent">{i + 1}</span>
-        <h3 class="mt-1 text-lg font-semibold">{title}</h3>
+    {steps.map(([icon, title, text], i) => (
+      <li
+        data-reveal
+        data-reveal-index={i}
+        class="rounded-2xl bg-neutral-50 p-6 transition-[box-shadow,translate] duration-200 ease-[cubic-bezier(0.2,0,0,1)] hover:-translate-y-0.5 hover:shadow-[0_1px_2px_rgba(0,0,0,.04),0_14px_30px_-18px_rgba(0,0,0,.35)]"
+      >
+        <div class="flex items-center gap-3">
+          <span class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-white text-accent shadow-[0_1px_2px_rgba(0,0,0,.06)]">
+            <Icon name={icon} />
+          </span>
+          <span class="text-sm font-semibold tabular-nums text-accent">{i + 1}</span>
+        </div>
+        <h3 class="mt-3 text-lg font-semibold">{title}</h3>
         <p class="mt-2 text-neutral-600">{text}</p>
       </li>
     ))}

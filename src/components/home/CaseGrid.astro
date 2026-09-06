@@ -9,6 +9,7 @@ const cases = sortCases(await getCollection('cases'));
   <h2 class="text-3xl font-bold tracking-tight">Кейсы</h2>
   <p class="mt-2 text-neutral-600">Что уже сделано и как это работает у клиентов.</p>
   <div class="mt-8 grid gap-x-6 gap-y-10 md:grid-cols-2 xl:grid-cols-3">
-    {cases.map((entry) => <CaseCard entry={entry} />)}
+    {/* The stagger restarts per row of three so the last card never waits on the whole grid. */}
+    {cases.map((entry, i) => <CaseCard entry={entry} index={i % 3} />)}
   </div>
 </section>

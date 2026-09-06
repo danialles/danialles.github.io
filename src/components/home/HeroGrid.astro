@@ -1,0 +1,105 @@
+---
+// A dot grid behind the hero headline: dots lean towards the cursor and brighten near it.
+// Purely decorative, hence aria-hidden and pointer-events-none.
+---
+<canvas
+  data-hero-grid
+  aria-hidden="true"
+  class="hero-grid pointer-events-none absolute inset-0 -z-10 h-full w-full"
+></canvas>
+
+<script is:inline>
+  (() => {
+    const canvas = document.querySelector('[data-hero-grid]');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d', { alpha: true });
+    if (!ctx) return;
+
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // A coarse pointer has no cursor to follow: draw the grid once and never start the loop.
+    const coarse = matchMedia('(pointer: coarse)').matches;
+    const STEP = 26;
+    const REACH = 130;
+    const pointer = { x: -9999, y: -9999, on: false };
+    let w = 0;
+    let h = 0;
+    let raf = 0;
+    let running = false;
+
+    const resize = () => {
+      const rect = canvas.getBoundingClientRect();
+      // Cap the pixel ratio: on a 3x phone the extra pixels cost more than they show.
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = rect.width;
+      h = rect.height;
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+
+    const draw = () => {
+      ctx.clearRect(0, 0, w, h);
+      for (let x = STEP; x < w; x += STEP) {
+        for (let y = STEP; y < h; y += STEP) {
+          let dx = 0;
+          let dy = 0;
+          let near = 0;
+          if (pointer.on) {
+            const vx = pointer.x - x;
+            const vy = pointer.y - y;
+            const dist = Math.hypot(vx, vy);
+            if (dist < REACH) {
+              near = 1 - dist / REACH;
+              // Dots drift towards the cursor, never far enough to break the grid.
+              dx = vx * near * 0.22;
+              dy = vy * near * 0.22;
+            }
+          }
+          const r = 1.1 + near * 1.5;
+          ctx.beginPath();
+          ctx.arc(x + dx, y + dy, r, 0, Math.PI * 2);
+          ctx.fillStyle = near > 0 ? `rgba(37, 78, 214, ${0.14 + near * 0.5})` : 'rgba(0, 0, 0, 0.13)';
+          ctx.fill();
+        }
+      }
+    };
+
+    const loop = () => {
+      draw();
+      raf = requestAnimationFrame(loop);
+    };
+    const start = () => {
+      if (running || still || coarse) return;
+      running = true;
+      raf = requestAnimationFrame(loop);
+    };
+    const stop = () => {
+      running = false;
+      cancelAnimationFrame(raf);
+    };
+
+    // The canvas is absolutely positioned, so its size comes from hero content that is still
+    // being parsed when this script runs: measuring now yields 0×0. The observer fires once
+    // the box exists and again whenever the text reflows.
+    if ('ResizeObserver' in window) {
+      new ResizeObserver(() => { resize(); draw(); }).observe(canvas);
+    } else {
+      window.addEventListener('load', () => { resize(); draw(); });
+    }
+
+    if (!still && !coarse) {
+      window.addEventListener('pointermove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        pointer.x = e.clientX - rect.left;
+        pointer.y = e.clientY - rect.top;
+        pointer.on = true;
+      }, { passive: true });
+      window.addEventListener('pointerleave', () => { pointer.on = false; }, { passive: true });
+      // The loop only runs while the hero is on screen — scrolling past it costs nothing.
+      new IntersectionObserver((entries) => {
+        entries[0].isIntersecting ? start() : stop();
+      }, { threshold: 0 }).observe(canvas);
+    }
+
+  })();
+</script>

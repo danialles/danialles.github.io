@@ -2,20 +2,20 @@
 import site from '../../site.config.mjs';
 import { contactLinks } from '../lib/contacts';
 
-interface Props { class?: string }
-const { class: className = '' } = Astro.props;
+interface Props { class?: string; [key: `data-${string}`]: string | undefined }
+const { class: className = '', ...rest } = Astro.props;
 const links = contactLinks(site);
-const primary = 'bg-accent text-white hover:bg-accent-ink';
-const secondary = 'border border-neutral-300 text-neutral-900 hover:border-neutral-900';
+const primary = 'bg-accent text-white shadow-[0_1px_2px_rgba(0,0,0,.10),0_8px_20px_-10px_oklch(52%_0.2_262/.55)] hover:bg-accent-ink';
+const secondary = 'border border-neutral-300 text-neutral-900 hover:border-neutral-900 hover:shadow-[0_1px_2px_rgba(0,0,0,.05),0_8px_20px_-14px_rgba(0,0,0,.4)]';
 ---
 {/* Stacked full-width on a phone, one wrapping row from 640 px up. */}
-<div class={`flex flex-col gap-3 sm:flex-row sm:flex-wrap ${className}`} data-contacts>
+<div class={`flex flex-col gap-3 sm:flex-row sm:flex-wrap ${className}`} data-contacts {...rest}>
   {links.map((link, i) => (
     <a
       href={link.href}
       rel={link.kind === 'email' ? undefined : 'noopener'}
       target={link.kind === 'email' ? undefined : '_blank'}
-      class={`inline-flex min-h-12 items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium transition ${i === 0 ? primary : secondary}`}
+      class={`inline-flex min-h-12 items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium transition-[background-color,border-color,box-shadow,scale] duration-200 ease-[cubic-bezier(0.2,0,0,1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-[0.96] ${i === 0 ? primary : secondary}`}
       data-contact={link.kind}
     >{link.label}</a>
   ))}
