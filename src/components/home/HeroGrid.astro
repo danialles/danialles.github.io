@@ -1,6 +1,6 @@
 ---
-// A dot field behind the hero headline. It lives on its own — a slow diagonal wave travels
-// through it and the dots breathe with it — and leans towards the cursor when there is one.
+// Three layers behind the hero headline: a static dot grid that leans towards the cursor,
+// ribbons made of summed sines drifting across it, and slow motes rising through both.
 // Purely decorative, hence aria-hidden and pointer-events-none.
 ---
 <canvas
@@ -39,19 +39,27 @@
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
-    const draw = () => {
-      ctx.clearRect(0, 0, w, h);
+    // Floating motes: slow risers with a soft radial falloff, the layer that reads as air.
+    const MOTES = coarse ? 7 : 14;
+    let motes = [];
+    const seedMotes = () => {
+      motes = Array.from({ length: MOTES }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: 3 + Math.random() * 7,
+        speed: 6 + Math.random() * 14,
+        wobble: 8 + Math.random() * 18,
+        rate: 0.4 + Math.random() * 0.8,
+        phase: Math.random() * Math.PI * 2,
+        alpha: 0.05 + Math.random() * 0.09,
+      }));
+    };
+
+    const drawDots = () => {
       for (let x = STEP; x < w; x += STEP) {
         for (let y = STEP; y < h; y += STEP) {
-          // Two sines at different scales stand in for noise: cheap, and the pattern is long
-          // enough that the eye never catches it repeating.
-          const wave =
-            Math.sin((x + y) * 0.0055 - t * 0.9) * 0.6 +
-            Math.sin(x * 0.011 - y * 0.007 + t * 0.55) * 0.4;
-          const lift = (wave + 1) / 2;
-
-          let dx = Math.sin(y * 0.02 + t * 0.7) * 1.6;
-          let dy = Math.cos(x * 0.018 + t * 0.6) * 1.6;
+          let dx = 0;
+          let dy = 0;
           let near = 0;
           if (pointer.on) {
             const vx = pointer.x - x;
@@ -60,29 +68,69 @@
             if (dist < REACH) {
               near = 1 - dist / REACH;
               // Dots drift towards the cursor, never far enough to break the grid.
-              dx += vx * near * 0.22;
-              dy += vy * near * 0.22;
+              dx = vx * near * 0.22;
+              dy = vy * near * 0.22;
             }
           }
-
           ctx.beginPath();
-          ctx.arc(x + dx, y + dy, 0.6 + lift * 1.6 + near * 1.4, 0, Math.PI * 2);
-          // The crest of the wave drifts towards the accent blue, the trough stays slate:
-          // colour carries the motion, so the dots can stay small and quiet.
-          ctx.fillStyle = near > 0
-            ? `rgba(37, 78, 214, ${0.16 + near * 0.5})`
-            : `rgba(${15 + lift * 22}, ${23 + lift * 55}, ${42 + lift * 172}, ${0.05 + lift * 0.17})`;
+          ctx.arc(x + dx, y + dy, 1 + near * 1.5, 0, Math.PI * 2);
+          ctx.fillStyle = near > 0 ? `rgba(37, 78, 214, ${0.16 + near * 0.5})` : 'rgba(15, 23, 42, 0.10)';
           ctx.fill();
         }
       }
     };
 
+    // One ribbon: three sines of different wavelength summed, which never repeats visibly.
+    const drawWave = (baseY, amp, speed, width, alpha) => {
+      ctx.beginPath();
+      for (let x = 0; x <= w; x += 6) {
+        const y =
+          baseY +
+          Math.sin(x * 0.0042 + t * speed) * amp +
+          Math.sin(x * 0.011 + t * speed * 1.35) * amp * 0.4 +
+          Math.sin(x * 0.0018 - t * speed * 0.7) * amp * 0.7;
+        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = `rgba(37, 78, 214, ${alpha})`;
+      ctx.lineWidth = width;
+      ctx.stroke();
+    };
+
+    const drawMotes = (dt) => {
+      for (const m of motes) {
+        m.y -= m.speed * dt;
+        m.phase += m.rate * dt;
+        if (m.y + m.r < 0) {
+          m.y = h + m.r;
+          m.x = Math.random() * w;
+        }
+        const x = m.x + Math.sin(m.phase) * m.wobble * 0.3;
+        const g = ctx.createRadialGradient(x, m.y, m.r * 0.1, x, m.y, m.r);
+        g.addColorStop(0, `rgba(37, 78, 214, ${m.alpha})`);
+        g.addColorStop(1, 'rgba(37, 78, 214, 0)');
+        ctx.beginPath();
+        ctx.arc(x, m.y, m.r, 0, Math.PI * 2);
+        ctx.fillStyle = g;
+        ctx.fill();
+      }
+    };
+
+    const draw = (dt = 0) => {
+      ctx.clearRect(0, 0, w, h);
+      drawDots();
+      drawWave(h * 0.52, 26, 0.45, 1.6, 0.16);
+      drawWave(h * 0.62, 18, 0.62, 1.2, 0.1);
+      drawWave(h * 0.44, 14, 0.34, 1, 0.07);
+      drawMotes(dt);
+    };
+
     let last = 0;
     const loop = (now) => {
       // Time drives the wave, not the frame count: the speed is the same on 60 and 120 Hz.
-      t += Math.min(now - last, 50) / 1000;
+      const dt = Math.min(now - last, 50) / 1000;
+      t += dt;
       last = now;
-      draw();
+      draw(dt);
       raf = requestAnimationFrame(loop);
     };
     const start = () => {
@@ -100,9 +148,9 @@
     // being parsed when this script runs: measuring now yields 0×0. The observer fires once
     // the box exists and again whenever the text reflows.
     if ('ResizeObserver' in window) {
-      new ResizeObserver(() => { resize(); draw(); }).observe(canvas);
+      new ResizeObserver(() => { resize(); seedMotes(); draw(); }).observe(canvas);
     } else {
-      window.addEventListener('load', () => { resize(); draw(); });
+      window.addEventListener('load', () => { resize(); seedMotes(); draw(); });
     }
 
     if (!still) {

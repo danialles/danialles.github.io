@@ -75,7 +75,10 @@ const jsonLdText = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : ''
               glyph.style.setProperty('--dx', (Math.random() * 24 - 12).toFixed(1) + 'px');
               glyph.style.setProperty('--dy', (Math.random() * 22 - 6).toFixed(1) + 'px');
               glyph.style.setProperty('--rot', (Math.random() * 10 - 5).toFixed(1) + 'deg');
-              glyph.style.transitionDelay = Math.min(n * 22, 700) + 'ms';
+              // The hero headline is the largest paint on the page: a long stagger there
+              // would hold back LCP, so it carries its own shorter step.
+              const step = Number(heading.dataset.assembleStep || 22);
+              glyph.style.transitionDelay = Math.min(n * step, 700) + 'ms';
               wrap.appendChild(glyph);
               n++;
             }
