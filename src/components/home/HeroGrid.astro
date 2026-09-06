@@ -1,5 +1,6 @@
 ---
-// A dot grid behind the hero headline: dots lean towards the cursor and brighten near it.
+// A dot field behind the hero headline. It lives on its own — a slow diagonal wave travels
+// through it and the dots breathe with it — and leans towards the cursor when there is one.
 // Purely decorative, hence aria-hidden and pointer-events-none.
 ---
 <canvas
@@ -16,15 +17,16 @@
     if (!ctx) return;
 
     const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    // A coarse pointer has no cursor to follow: draw the grid once and never start the loop.
+    // Touch screens get the same wave, just a sparser field: fewer dots, no cursor logic.
     const coarse = matchMedia('(pointer: coarse)').matches;
-    const STEP = 26;
+    const STEP = coarse ? 32 : 26;
     const REACH = 130;
     const pointer = { x: -9999, y: -9999, on: false };
     let w = 0;
     let h = 0;
     let raf = 0;
     let running = false;
+    let t = 0;
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
@@ -41,8 +43,15 @@
       ctx.clearRect(0, 0, w, h);
       for (let x = STEP; x < w; x += STEP) {
         for (let y = STEP; y < h; y += STEP) {
-          let dx = 0;
-          let dy = 0;
+          // Two sines at different scales stand in for noise: cheap, and the pattern is long
+          // enough that the eye never catches it repeating.
+          const wave =
+            Math.sin((x + y) * 0.0055 - t * 0.9) * 0.6 +
+            Math.sin(x * 0.011 - y * 0.007 + t * 0.55) * 0.4;
+          const lift = (wave + 1) / 2;
+
+          let dx = Math.sin(y * 0.02 + t * 0.7) * 1.6;
+          let dy = Math.cos(x * 0.018 + t * 0.6) * 1.6;
           let near = 0;
           if (pointer.on) {
             const vx = pointer.x - x;
@@ -51,26 +60,35 @@
             if (dist < REACH) {
               near = 1 - dist / REACH;
               // Dots drift towards the cursor, never far enough to break the grid.
-              dx = vx * near * 0.22;
-              dy = vy * near * 0.22;
+              dx += vx * near * 0.22;
+              dy += vy * near * 0.22;
             }
           }
-          const r = 1.1 + near * 1.5;
+
           ctx.beginPath();
-          ctx.arc(x + dx, y + dy, r, 0, Math.PI * 2);
-          ctx.fillStyle = near > 0 ? `rgba(37, 78, 214, ${0.14 + near * 0.5})` : 'rgba(0, 0, 0, 0.13)';
+          ctx.arc(x + dx, y + dy, 0.6 + lift * 1.6 + near * 1.4, 0, Math.PI * 2);
+          // The crest of the wave drifts towards the accent blue, the trough stays slate:
+          // colour carries the motion, so the dots can stay small and quiet.
+          ctx.fillStyle = near > 0
+            ? `rgba(37, 78, 214, ${0.16 + near * 0.5})`
+            : `rgba(${15 + lift * 22}, ${23 + lift * 55}, ${42 + lift * 172}, ${0.05 + lift * 0.17})`;
           ctx.fill();
         }
       }
     };
 
-    const loop = () => {
+    let last = 0;
+    const loop = (now) => {
+      // Time drives the wave, not the frame count: the speed is the same on 60 and 120 Hz.
+      t += Math.min(now - last, 50) / 1000;
+      last = now;
       draw();
       raf = requestAnimationFrame(loop);
     };
     const start = () => {
-      if (running || still || coarse) return;
+      if (running || still) return;
       running = true;
+      last = performance.now();
       raf = requestAnimationFrame(loop);
     };
     const stop = () => {
@@ -87,19 +105,24 @@
       window.addEventListener('load', () => { resize(); draw(); });
     }
 
-    if (!still && !coarse) {
-      window.addEventListener('pointermove', (e) => {
-        const rect = canvas.getBoundingClientRect();
-        pointer.x = e.clientX - rect.left;
-        pointer.y = e.clientY - rect.top;
-        pointer.on = true;
-      }, { passive: true });
-      window.addEventListener('pointerleave', () => { pointer.on = false; }, { passive: true });
+    if (!still) {
+      if (!coarse) {
+        window.addEventListener('pointermove', (e) => {
+          const rect = canvas.getBoundingClientRect();
+          pointer.x = e.clientX - rect.left;
+          pointer.y = e.clientY - rect.top;
+          pointer.on = true;
+        }, { passive: true });
+        window.addEventListener('pointerleave', () => { pointer.on = false; }, { passive: true });
+      }
       // The loop only runs while the hero is on screen — scrolling past it costs nothing.
       new IntersectionObserver((entries) => {
         entries[0].isIntersecting ? start() : stop();
       }, { threshold: 0 }).observe(canvas);
+      // A hidden tab keeps firing rAF in some browsers; stop on the way out either way.
+      document.addEventListener('visibilitychange', () => {
+        document.hidden ? stop() : start();
+      });
     }
-
   })();
 </script>
